@@ -1,0 +1,1149 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Yantrakart Admin Panel</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap" rel="stylesheet" />
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.8.2/jspdf.plugin.autotable.min.js"></script>
+  <style>
+    :root {
+      --bg-color: #0d1117;
+      --text-color: #c9d1d9;
+      --primary-color: #00e3ca;
+      --primary-hover: #00bfa1;
+      --header-bg: #161b22;
+      --btn-danger: #ff3864;
+      --btn-danger-hover: #e02050;
+      --table-bg: #161b22;
+      --table-header-bg: #00e3ca;
+      --table-header-text: #0d1117;
+      --hover-row-bg: #004d40;
+      --input-bg: #22272e;
+      --input-border: #00e3ca;
+      --input-focus: #00bfa1;
+    }
+    * { box-sizing: border-box; }
+    body {
+      margin: 0;
+      font-family: 'Poppins', sans-serif;
+      background: var(--bg-color);
+      color: var(--text-color);
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      padding: 1rem;
+      transition: background 0.3s, color 0.3s;
+    }
+    body.light {
+      --bg-color: #fdfdfd;
+      --text-color: #1a1a1a;
+      --primary-color: #00796b;
+      --primary-hover: #004d40;
+      --header-bg: #f1f1f1;
+      --btn-danger: #d32f2f;
+      --btn-danger-hover: #9a0007;
+      --table-bg: #ffffff;
+      --table-header-bg: #00796b;
+      --table-header-text: #ffffff;
+      --hover-row-bg: #e0f2f1;
+      --input-bg: #f7f7f7;
+      --input-border: #00796b;
+      --input-focus: #004d40;
+    }
+    .auth-bg {
+      position: fixed; inset: 0; background: var(--bg-color);
+      display: flex; align-items: center; justify-content: center;
+      z-index: 5000; min-height: 100vh; min-width: 100vw;
+    }
+    .auth-card {
+      background: var(--header-bg);
+      color: var(--primary-color);
+      border-radius: 18px;
+      padding: 48px 36px 36px 36px;
+      box-shadow: 0 0 24px var(--primary-color);
+      display: flex; flex-direction: column; gap: 20px; min-width: 350px;
+      align-items: stretch;
+      animation: fadeInUp 0.7s cubic-bezier(.4,1.4,.7,1);
+    }
+    @keyframes fadeInUp {
+      from { opacity: 0; transform: translateY(40px);}
+      to   { opacity: 1; transform: translateY(0);}
+    }
+    .auth-card h2 {
+      margin: 0 0 8px 0;
+      color: var(--primary-color);
+      text-align: center;
+      font-size: 2rem;
+      font-weight: 700;
+      letter-spacing: 2px;
+    }
+    .auth-card label { font-weight: 600; color: var(--primary-color);}
+    .auth-card input[type="password"] {
+      font-size: 1.2em; padding: 12px;
+      border-radius: 8px; border: 1.5px solid var(--primary-color);
+      background: var(--input-bg); color: var(--text-color);
+      margin-bottom: 8px;
+      outline: none;
+      transition: border 0.2s;
+      width: 100%;
+    }
+    .auth-card input[type="password"]:focus {
+      border-color: var(--input-focus);
+    }
+    .auth-card button {
+      background: var(--primary-color);
+      color: var(--table-header-text);
+      border: none;
+      padding: 12px 0;
+      border-radius: 8px;
+      font-size: 1.1em;
+      font-weight: 700;
+      cursor: pointer;
+      margin-top: 8px;
+      transition: background 0.2s;
+      box-shadow: 0 2px 8px var(--primary-color);
+    }
+    .auth-card button:hover {
+      background: var(--primary-hover);
+    }
+    .auth-error {
+      color: var(--btn-danger);
+      min-height: 20px;
+      font-size: 1em;
+      text-align: center;
+      font-weight: 600;
+    }
+    .auth-logo {
+      display: flex;
+      justify-content: center;
+      margin-bottom: 10px;
+    }
+    .auth-logo img {
+      height: 56px;
+      border-radius: 12px;
+      box-shadow: 0 0 8px var(--primary-color);
+    }
+    .drawer-btn {
+      display: none;
+      background: transparent;
+      border: none;
+      font-size: 2rem;
+      color: var(--primary-color);
+      cursor: pointer;
+      margin-right: 1rem;
+    }
+    .drawer {
+      display: none;
+      position: fixed;
+      top: 0; left: 0; height: 100vh; width: 220px;
+      background: var(--header-bg);
+      box-shadow: 2px 0 16px var(--primary-color);
+      z-index: 3000;
+      flex-direction: column;
+      padding: 2rem 1rem 1rem 1rem;
+      gap: 1rem;
+      animation: fadeInDrawer 0.3s;
+    }
+    .drawer .tab-btn { width: 100%; font-size: 1.1rem; margin-bottom: 0.5rem;}
+    .drawer-close { font-size: 2rem; color: var(--primary-color); background: none; border: none; align-self: flex-end; cursor: pointer; }
+    @keyframes fadeInDrawer {
+      from { transform: translateX(-60px); opacity: 0;}
+      to { transform: translateX(0); opacity: 1;}
+    }
+    @media (max-width: 900px) {
+      .drawer-btn { display: block;}
+      .tabs { display: none;}
+    }
+    @media (max-width: 600px) {
+      .auth-card { min-width: 90vw; }
+      th, td { font-size: 0.92rem; padding: 8px 4px;}
+      table { min-width: 600px; }
+    }
+    header {
+      width: 100%;
+      max-width: 1100px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 1rem;
+      background: var(--header-bg);
+      padding: 0.8rem 1.2rem;
+      border-radius: 8px;
+      box-shadow: 0 0 12px var(--primary-color);
+    }
+    header .logo {
+      font-weight: 700;
+      font-size: 1.4rem;
+      color: var(--primary-color);
+      user-select: none;
+      display: flex;
+      align-items: center;
+      gap: 0.7rem;
+    }
+    header h1 {
+      margin: 0;
+      font-weight: 600;
+      font-size: 2.25rem;
+      color: var(--primary-color);
+      text-shadow: 0 0 6px var(--primary-color);
+      user-select: none;
+    }
+    header button#themeToggle {
+      background: var(--primary-color);
+      border: none;
+      padding: 0.5rem 1rem;
+      border-radius: 6px;
+      cursor: pointer;
+      color: var(--table-header-text);
+      font-weight: 600;
+      transition: background-color 0.3s;
+      user-select: none;
+    }
+    header button#themeToggle:hover {
+      background: var(--primary-hover);
+    }
+    .tabs {
+      display: flex;
+      gap: 1rem;
+      margin-bottom: 1rem;
+      flex-wrap: wrap;
+      justify-content: center;
+      max-width: 1100px;
+      width: 100%;
+    }
+    .tab-btn {
+      background: var(--header-bg);
+      border: none;
+      padding: 0.6rem 1rem;
+      font-weight: 600;
+      border-radius: 8px;
+      cursor: pointer;
+      color: var(--primary-color);
+      text-transform: uppercase;
+      transition: background-color 0.3s;
+      user-select: none;
+      flex: 1 1 150px;
+      text-align: center;
+      outline: none;
+      border: 2px solid transparent;
+      display: flex;
+      align-items: center;
+      gap: 0.5em;
+      justify-content: center;
+    }
+    .tab-btn.active,
+    .tab-btn:focus,
+    .tab-btn:hover {
+      background: var(--primary-color);
+      color: var(--table-header-text);
+      box-shadow: 0 0 8px var(--primary-color);
+      border: 2px solid var(--primary-hover);
+    }
+    .table-responsive {
+      width: 100%;
+      overflow-x: auto;
+      margin-bottom: 2rem;
+      max-width: 1200px;
+    }
+    table {
+      border-collapse: collapse;
+      width: 100%;
+      min-width: 950px;
+      background: var(--table-bg);
+      border-radius: 12px;
+      overflow: hidden;
+      box-shadow: 0 0 20px var(--primary-color);
+      margin-bottom: 2rem;
+      display: none;
+    }
+    table.active { display: table; }
+    th, td {
+      padding: 1rem 1.2rem;
+      text-align: left;
+      border-bottom: 1px solid #222;
+      vertical-align: top;
+    }
+    th {
+      background: var(--table-header-bg);
+      color: var(--table-header-text);
+      font-weight: 600;
+      text-transform: uppercase;
+      font-size: 0.98rem;
+      letter-spacing: 0.05em;
+      border-right: 1px solid #fff2;
+      border-left: 1px solid #fff2;
+    }
+    tbody tr:hover {
+      background-color: var(--hover-row-bg);
+      cursor: pointer;
+      transition: background-color 0.3s ease;
+    }
+    td button.delete-btn, td button.status-btn {
+      background: var(--btn-danger);
+      border: none;
+      padding: 0.4rem 0.8rem;
+      color: white;
+      border-radius: 8px;
+      cursor: pointer;
+      font-weight: 600;
+      transition: background-color 0.3s ease;
+      user-select: none;
+      margin-right: 4px;
+      margin-bottom: 2px;
+    }
+    td button.delete-btn:hover, td button.status-btn:hover {
+      background: var(--btn-danger-hover);
+    }
+    td button.status-btn {
+      background: var(--primary-color);
+      color: var(--table-header-text);
+      margin-right: 0;
+    }
+    .table-controls {
+      display: flex;
+      gap: 1rem;
+      align-items: center;
+      margin-bottom: 0.8rem;
+      flex-wrap: wrap;
+    }
+    .table-controls input[type="text"] {
+      background: var(--input-bg);
+      color: var(--text-color);
+      border: 1.5px solid var(--input-border);
+      border-radius: 8px;
+      padding: 0.5rem 1rem;
+      font-size: 1rem;
+      outline: none;
+      transition: border 0.2s;
+      min-width: 180px;
+    }
+    .table-controls input[type="text"]:focus {
+      border-color: var(--input-focus);
+    }
+    .table-controls button {
+      background: var(--primary-color);
+      color: var(--table-header-text);
+      border: none;
+      padding: 0.5rem 1.1rem;
+      border-radius: 8px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: background 0.2s;
+    }
+    .table-controls button:hover {
+      background: var(--primary-hover);
+    }
+    #loading {
+      display: none;
+      position: fixed;
+      top: 80px;
+      left: 50%;
+      transform: translateX(-50%);
+      background: var(--header-bg);
+      color: var(--primary-color);
+      padding: 18px 30px;
+      border-radius: 10px;
+      box-shadow: 0 2px 8px var(--primary-color);
+      font-size: 1.1em;
+      z-index: 1001;
+      display: flex;
+      align-items: center;
+      gap: 1rem;
+    }
+    .loading-spinner {
+      border: 4px solid #00e3ca44;
+      border-top: 4px solid var(--primary-color);
+      border-radius: 50%;
+      width: 28px;
+      height: 28px;
+      animation: spin 1s linear infinite;
+    }
+    @keyframes spin {
+      0% { transform: rotate(0deg);}
+      100% { transform: rotate(360deg);}
+    }
+    .toast {
+      position: fixed;
+      bottom: 32px; right: 32px;
+      background: var(--primary-color);
+      color: var(--table-header-text);
+      padding: 1rem 1.5rem;
+      border-radius: 10px;
+      font-size: 1.1rem;
+      min-width: 180px;
+      box-shadow: 0 0 10px var(--primary-hover);
+      opacity: 0;
+      pointer-events: none;
+      transform: translateY(30px);
+      transition: opacity 0.3s, transform 0.3s;
+      z-index: 2000;
+    }
+    .toast.show {
+      opacity: 1;
+      pointer-events: auto;
+      transform: translateY(0);
+    }
+    footer {
+      text-align: center;
+      padding: 24px 0 12px 0;
+      color: #888;
+      font-size: 1em;
+    }
+    .heart { color: #e74c3c; }
+    
+  </style>
+</head>
+<body>
+  <!-- PIN AUTH PAGE -->
+  <div class="auth-bg" id="authPage">
+    <form class="auth-card" id="authForm" autocomplete="off" onsubmit="return false;">
+      <div class="auth-logo">
+        <img src="images/logo.jpg" alt="YANTRAKART Logo" />
+      </div>
+      <h2>Admin Login</h2>
+      <label for="adminPinInput">Enter Admin PIN</label>
+      <div style="position:relative;">
+        <input type="password" id="adminPinInput" maxlength="12" autocomplete="off" required placeholder="••••••" style="width:100%;" />
+        <span id="togglePin" style="position:absolute;right:12px;top:13px;cursor:pointer;color:var(--primary-color);font-size:1.2em;">👁️</span>
+      </div>
+      <button type="submit">Login</button>
+      <div class="auth-error" id="authError"></div>
+    </form>
+  </div>
+
+  <!-- HEADER -->
+  <header>
+    <div class="logo">
+      <img src="images/logo.jpg" alt="YANTRAKART Logo" style="height: 80px;" />
+      <h1>YANTRAKART</h1>
+    </div>
+    <h1>ADMIN PANEL</h1>
+    <button id="themeToggle" aria-label="Toggle theme">Light Mode</button>
+  </header>
+
+  <!-- TABS -->
+  <div class="tabs">
+    <button class="tab-btn active" data-target="ordersTable">Orders</button>
+    <button class="tab-btn" data-target="sellPanelTable">Sell Panel</button>
+    <button class="tab-btn" data-target="couponsTable">Coupons</button>
+    <button class="tab-btn" data-target="usersTable">Users/Referrals</button>
+    <button class="tab-btn" data-target="feedbackTable">Feedbacks</button>
+    <button class="tab-btn" data-target="contactTable">Contact Messages</button>
+    <button class="tab-btn" data-target="cadTable">CAD Suggestions</button>
+    <button class="tab-btn" data-target="iotTable">IoT Suggestions</button>
+    <button class="tab-btn" data-target="notificationsTable">Notifications</button>
+  </div>
+
+  <div id="notif" class="toast"></div>
+  <div id="loading"><span class="loading-spinner"></span>Loading data...</div>
+
+  <!-- TABLE CONTROLS (only one search bar and export controls) -->
+  <div class="table-controls" id="tableControls" style="display:flex;">
+    <input type="text" id="tableSearch" placeholder="Search..." />
+    <button id="exportBtn">Export CSV</button>
+    <button id="exportPdfBtn">Export PDF</button>
+  </div>
+
+  <!-- TABLES (each id is unique, only one coupon form) -->
+  <div class="table-responsive">
+    <table id="ordersTable" class="active" aria-label="Orders Table">
+      <thead>
+  <tr>
+    <th>Order ID</th>
+<th>Project</th>
+<th>User Name</th>
+<th>Phone</th>
+<th>Price</th>
+<th>Final Amount</th>
+<th>Status</th>
+<th>Payment Status</th>
+<th>Delivery Feedback</th>
+<th>Submitted</th>
+<th>Actions</th>
+  </tr>
+      </thead>
+      <tbody></tbody>
+    </table>
+  </div>
+  <div class="table-responsive">
+    <table id="sellPanelTable" aria-label="Sell Panel Table">
+      <thead>
+        <tr>
+          <th>Seller Name</th>
+          <th>Email</th>
+          <th>Contact</th>
+          <th>Item Name</th>
+          <th>Category</th>
+          <th>Description</th>
+          <th>Price</th>
+          <th>Image</th>
+          <th>Status</th>
+          <th>Submitted</th>
+          <th>Actions</th>
+        </tr>
+      </thead>
+      <tbody></tbody>
+    </table>
+  </div>
+  <!-- Only one coupon form -->
+  <form class="add-coupon-form" id="addCouponForm" autocomplete="off" style="display:none;">
+    <input type="text" id="couponCode" placeholder="Coupon Code" required maxlength="20" />
+    <input type="number" id="couponDiscount" placeholder="Discount" required min="1" />
+    <select id="couponType" required>
+      <option value="fixed">₹ Fixed</option>
+      <option value="percent">% Percent</option>
+    </select>
+    <input type="number" id="couponMaxDiscount" placeholder="Max Discount (for %)" min="1" style="display:none;" />
+    <button type="submit">Add Coupon</button>
+  </form>
+  <div class="table-responsive">
+    <table id="couponsTable" aria-label="Coupons Table">
+      <thead>
+        <tr>
+          <th>Code</th>
+          <th>Discount</th>
+          <th>Type</th>
+          <th>Max Discount</th>
+          <th>Used</th>
+          <th>Action</th>
+        </tr>
+      </thead>
+      <tbody></tbody>
+    </table>
+  </div>
+  <div class="table-responsive">
+    <table id="usersTable" aria-label="Users Table">
+      <thead>
+        <tr>
+          <th>Name</th>
+          <th>Email</th>
+          <th>Phone</th>
+          <th>Referral Code</th>
+          <th>Referrals Used</th>
+          <th>Registered</th>
+          <th>Action</th>
+        </tr>
+      </thead>
+      <tbody></tbody>
+    </table>
+  </div>
+  <div class="table-responsive">
+    <table id="feedbackTable" aria-label="Feedbacks Table">
+      <thead>
+        <tr>
+          <th>Name</th>
+          <th>Email</th>
+          <th>Feedback</th>
+          <th>Status</th>
+          <th>Submitted At</th>
+          <th>Action</th>
+        </tr>
+      </thead>
+      <tbody></tbody>
+    </table>
+  </div>
+  <div class="table-responsive">
+    <table id="contactTable" aria-label="Contact Form Messages Table">
+      <thead>
+        <tr>
+          <th>Name</th>
+          <th>Email</th>
+          <th>Phone</th>
+          <th>Message</th>
+          <th>Submitted At</th>
+          <th>Action</th>
+        </tr>
+      </thead>
+      <tbody></tbody>
+    </table>
+  </div>
+  <div class="table-responsive">
+    <table id="cadTable" aria-label="CAD Project Suggestions Table">
+      <thead>
+        <tr>
+          <th>Name</th>
+          <th>Phone</th>
+          <th>Project Name</th>
+          <th>Description</th>
+          <th>Submitted At</th>
+          <th>Action</th>
+        </tr>
+      </thead>
+      <tbody></tbody>
+    </table>
+  </div>
+  <div class="table-responsive">
+    <table id="iotTable" aria-label="IoT Project Suggestions Table">
+      <thead>
+        <tr>
+          <th>Name</th>
+          <th>Phone</th>
+          <th>Project Name</th>
+          <th>Description</th>
+          <th>Submitted At</th>
+          <th>Action</th>
+        </tr>
+      </thead>
+      <tbody></tbody>
+    </table>
+  </div>
+  <div class="table-responsive">
+    <table id="notificationsTable" aria-label="Notifications Table">
+      <thead>
+        <tr>
+          <th>Time</th>
+<th>User</th>
+<th>Message</th>
+<th>Type</th>
+<th>Action</th>
+
+        </tr>
+      </thead>
+      <tbody></tbody>
+    </table>
+  </div>
+  <footer>
+    Made with <span class="heart">❤️</span> by Chandigarh University students
+  </footer>
+<script type="module"> 
+import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
+import {
+  getFirestore, collection, getDocs, deleteDoc, doc, query, orderBy, updateDoc, serverTimestamp, addDoc, onSnapshot, getDoc
+} from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
+
+
+// --- FIREBASE CONFIG ---
+const firebaseConfig = {
+  apiKey: "AIzaSyAeiX6atXEITq6Jfptsc9a3Pib6swSWGZM",
+  authDomain: "cucontentprojectstore.firebaseapp.com",
+  projectId: "cucontentprojectstore",
+  storageBucket: "cucontentprojectstore.appspot.com",
+  messagingSenderId: "507592669118",
+  appId: "1:507592669118:web:07d5d1c70872b7964febef"
+};
+const app = initializeApp(firebaseConfig);
+const db = getFirestore(app);
+
+// --- PIN AUTH ---
+const ADMIN_PIN = "4140";
+const authPage = document.getElementById('authPage');
+const authForm = document.getElementById('authForm');
+const adminPinInput = document.getElementById('adminPinInput');
+const authError = document.getElementById('authError');
+const togglePin = document.getElementById('togglePin');
+togglePin.onclick = () => {
+  adminPinInput.type = adminPinInput.type === 'password' ? 'text' : 'password';
+  togglePin.textContent = adminPinInput.type === 'password' ? '👁️' : '🙈';
+};
+authForm.addEventListener('submit', () => {
+  if (adminPinInput.value === ADMIN_PIN) {
+    authPage.style.display = "none";
+    showNotif("Welcome, Admin!");
+    loadAll();
+  } else {
+    authError.textContent = "Incorrect PIN. Please try again.";
+    adminPinInput.value = "";
+  }
+});
+adminPinInput.addEventListener('keydown', e => {
+  if (e.key === "Enter") authForm.dispatchEvent(new Event('submit'));
+});
+
+// --- UTIL ---
+function escapeHtml(text) {
+  if (!text) return "";
+  return text.replace(/[&<>"']/g, (m) => ({
+    '&': '&amp;',
+    '<': '&lt;',
+    '>': '&gt;',
+    '"': '&quot;',
+    "'": '&#39;'
+  })[m]);
+}
+function formatTimestamp(ts) {
+  if (!ts) return "N/A";
+  if (typeof ts.toDate === 'function') return ts.toDate().toLocaleString();
+  if (ts.seconds) return new Date(ts.seconds * 1000).toLocaleString();
+  return "N/A";
+}
+function showNotif(msg) {
+  const notif = document.getElementById('notif');
+  notif.textContent = msg;
+  notif.style.display = "block";
+  setTimeout(() => notif.style.display = "none", 3000);
+}
+function showLoading(show) {
+  document.getElementById('loading').style.display = show ? "flex" : "none";
+}
+
+// --- TABLE SEARCH & EXPORT ---
+let currentTableId = "ordersTable";
+const tableControls = document.getElementById('tableControls');
+const tableSearch = document.getElementById('tableSearch');
+const exportBtn = document.getElementById('exportBtn');
+const exportPdfBtn = document.getElementById('exportPdfBtn');
+let tableDataCache = {};
+
+tableSearch.oninput = () => {
+  applySearchAndRender(currentTableId, tableDataCache[currentTableId] || []);
+};
+exportBtn.onclick = () => exportTableToCSV(currentTableId);
+exportPdfBtn.onclick = () => exportTableToPDF(currentTableId);
+
+function applySearchAndRender(tableId, data) {
+  const search = tableSearch.value.trim().toLowerCase();
+  const tbody = document.querySelector(`#${tableId} tbody`);
+  const headers = Array.from(document.querySelector(`#${tableId} thead tr`).children).map(th => th.textContent);
+  let filtered = data;
+  if (search) {
+    filtered = data.filter(row =>
+      row.some(cell => cell && cell.toLowerCase && cell.toLowerCase().includes(search))
+    );
+  }
+  tbody.innerHTML = "";
+  if (!filtered.length) {
+    tbody.innerHTML = `<tr><td colspan="${headers.length}">No matching records found.</td></tr>`;
+  } else {
+    filtered.forEach(row => {
+      tbody.innerHTML += "<tr>" + row.map(cell => `<td>${cell}</td>`).join("") + "</tr>";
+    });
+  }
+}
+function exportTableToCSV(tableId) {
+  const data = tableDataCache[tableId] || [];
+  if (!data.length) return showNotif("Nothing to export!");
+  const headers = Array.from(document.querySelector(`#${tableId} thead tr`).children).map(th => th.textContent);
+  let csv = headers.join(",") + "\n";
+  data.forEach(row => {
+    csv += row.map(cell => {
+      let txt = cell.replace(/<[^>]+>/g, '').replace(/"/g, '""');
+      return `"${txt}"`;
+    }).join(",") + "\n";
+  });
+  const blob = new Blob([csv], {type: "text/csv"});
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.href = url;
+  a.download = `${tableId}.csv`;
+  document.body.appendChild(a);
+  a.click();
+  document.body.removeChild(a);
+  showNotif("Exported CSV!");
+}
+function exportTableToPDF(tableId) {
+  const data = tableDataCache[tableId] || [];
+  if (!data.length) return showNotif("Nothing to export!");
+  const headers = Array.from(document.querySelector(`#${tableId} thead tr`).children).map(th => th.textContent);
+  const rows = data.map(row => row.map(cell => cell.replace(/<[^>]+>/g, '')));
+  const { jsPDF } = window.jspdf;
+  const doc = new jsPDF();
+  doc.autoTable({
+    head: [headers],
+    body: rows,
+    styles: { font: "poppins", fontSize: 9 },
+    headStyles: { fillColor: [0, 227, 202] }
+  });
+  doc.save(`${tableId}.pdf`);
+  showNotif("Exported PDF!");
+}
+
+// --- TAB SWITCHING ---
+const tabButtons = document.querySelectorAll('.tab-btn');
+tabButtons.forEach(btn => {
+  btn.addEventListener('click', () => {
+    tabButtons.forEach(b => b.classList.remove('active'));
+    document.querySelectorAll('table').forEach(t => t.classList.remove('active'));
+    btn.classList.add('active');
+    const target = btn.getAttribute('data-target');
+    document.getElementById(target).classList.add('active');
+    document.getElementById('addCouponForm').style.display = (target === 'couponsTable') ? "flex" : "none";
+    tableControls.style.display = "flex";
+    currentTableId = target;
+    tableSearch.value = "";
+    // Load and render
+    if (target === 'ordersTable') loadTableData(target, loadOrders);
+    if (target === 'sellPanelTable') loadTableData(target, loadSellPanel);
+    if (target === 'couponsTable') loadTableData(target, loadCoupons);
+    if (target === 'usersTable') loadTableData(target, loadUsers);
+    if (target === 'feedbackTable') loadTableData(target, loadFeedbacks);
+    if (target === 'contactTable') loadTableData(target, loadContacts);
+    if (target === 'cadTable') loadTableData(target, loadCAD);
+    if (target === 'iotTable') loadTableData(target, loadIOT);
+    if (target === 'notificationsTable') loadTableData(target, loadNotifications);
+  });
+});
+
+// --- THEME TOGGLE ---
+const themeToggleBtn = document.getElementById('themeToggle');
+function setTheme(theme) {
+  if (theme === 'light') {
+    document.body.classList.add('light');
+    themeToggleBtn.textContent = "Dark Mode";
+  } else {
+    document.body.classList.remove('light');
+    themeToggleBtn.textContent = "Light Mode";
+  }
+  localStorage.setItem('theme', theme);
+}
+themeToggleBtn.addEventListener('click', () => {
+  if (document.body.classList.contains('light')) {
+    setTheme('dark');
+  } else {
+    setTheme('light');
+  }
+});
+const savedTheme = localStorage.getItem('theme') || 'dark';
+setTheme(savedTheme);
+
+// --- DRAWER NAVIGATION FOR MOBILE ---
+const drawerBtn = document.getElementById("drawerOpenBtn");
+const drawer = document.getElementById("drawerNav");
+const drawerCloseBtn = document.getElementById("drawerCloseBtn");
+drawerBtn && (drawerBtn.onclick = () => (drawer.style.display = "flex"));
+drawerCloseBtn && (drawerCloseBtn.onclick = () => (drawer.style.display = "none"));
+drawer && drawer.querySelectorAll(".tab-btn").forEach((btn) => {
+  btn.onclick = () => {
+    drawer.style.display = "none";
+    document.querySelector(`.tabs .tab-btn[data-target="${btn.dataset.target}"]`).click();
+  };
+});
+
+// --- TABLE DATA LOADERS (for search/export) ---
+async function loadTableData(tableId, loaderFn) {
+  showLoading(true);
+  const data = await loaderFn();
+  tableDataCache[tableId] = data;
+  showLoading(false);
+  applySearchAndRender(tableId, data);
+}
+
+// --- ORDERS TABLE (with status update & notification) ---
+async function loadOrders() {
+  const q = query(collection(db, "orders"), orderBy("createdAt", "desc"));
+  const snapshot = await getDocs(q);
+  let data = [];
+  if (snapshot.empty) {
+    data = [];
+  } else {
+    snapshot.forEach(docSnap => {
+      const d = docSnap.data();
+     data.push([
+  docSnap.id,
+  d.projectName || "",
+  d.customerName || "",
+  d.customerPhone || "",
+  d.projectPrice ? "₹" + Number(d.projectPrice).toLocaleString("en-IN") : "-",
+  d.finalAmount ? "₹" + Number(d.finalAmount).toLocaleString("en-IN") : "-",
+  `<span class="status ${d.status||'pending'}">${escapeHtml(d.status||'pending')}</span>`,
+  `<select onchange="updatePaymentStatus('${docSnap.id}', '${escapeHtml(d.customerName||"")}', this.value)">
+    <option value="not_paid" ${d.paymentStatus=="not_paid"?"selected":""}>Not Paid</option>
+    <option value="half_paid" ${d.paymentStatus=="half_paid"?"selected":""}>Half Paid</option>
+    <option value="paid" ${d.paymentStatus=="paid"?"selected":""}>Paid</option>
+  </select>`,
+  `<input type="text" value="${escapeHtml(d.deliveryFeedback||'')}" placeholder="Delivery feedback" onchange="updateDeliveryFeedback('${docSnap.id}', this.value)" />`,
+  formatTimestamp(d.createdAt),
+  `<select onchange="updateOrderStatus('${docSnap.id}', this.value, '${escapeHtml(d.customerEmail||"")}', '${escapeHtml(d.customerPhone||"")}')">
+    <option value="pending" ${d.status=="pending"?"selected":""}>Pending</option>
+    <option value="approved" ${d.status=="approved"?"selected":""}>Approved</option>
+    <option value="advance_paid" ${d.status=="advance_paid"?"selected":""}>Advance Paid</option>
+    <option value="delivered" ${d.status=="delivered"?"selected":""}>Delivered</option>
+    <option value="rejected" ${d.status=="rejected"?"selected":""}>Rejected</option>
+  </select>`,
+  `<button class="delete-btn" data-id="${docSnap.id}" data-collection="orders">Delete</button>`
+]);
+    });
+  }
+  return data;
+}
+
+window.updatePaymentStatus = async function(orderId, userName, paymentStatus) {
+  try {
+    await updateDoc(doc(db, "orders", orderId), { paymentStatus });
+    showNotif(`Payment status updated to "${paymentStatus.replace('_', ' ')}" for ${userName || 'user'}.`);
+    // Optionally, send notification
+    const orderSnap = await getDoc(doc(db, "orders", orderId));
+    const orderData = orderSnap.data();
+    if (orderData && (orderData.customerEmail || orderData.customerPhone)) {
+      await addDoc(collection(db, "notifications"), {
+        userEmail: orderData.customerEmail || orderData.customerPhone,
+        message: `Your payment status for order "${orderId}" is now "${paymentStatus.replace('_',' ')}".`,
+        type: "payment",
+        orderId,
+        paymentStatus,
+        createdAt: serverTimestamp()
+      });
+    }
+    loadTableData("ordersTable", loadOrders);
+  } catch (err) {
+    showNotif("Error updating payment status: " + err.message);
+  }
+};
+
+window.updateOrderStatus = async function(orderId, status, userEmail, userPhone) {
+  try {
+    await updateDoc(doc(db, "orders", orderId), { status });
+    showNotif("Order status updated.");
+    let message = `Your order status is now: ${status}.`;
+    if (status === "approved") {
+      message = `Your order is approved! Please pay 50% advance to proceed: <a href="payment.html?orderId=${orderId}" target="_blank">Click here to pay</a>`;
+    }
+    if (userEmail || userPhone) {
+      await addDoc(collection(db, "notifications"), {
+        userEmail: userEmail || userPhone,
+        message: message,
+        type: "order",
+        orderId,
+        status,
+        createdAt: serverTimestamp()
+      });
+    }
+    loadTableData("ordersTable", loadOrders);
+  } catch (err) {
+    showNotif("Error updating order: " + err.message);
+  }
+};
+window.updateDeliveryFeedback = async function(orderId, feedback) {
+  try {
+    await updateDoc(doc(db, "orders", orderId), { deliveryFeedback: feedback });
+    showNotif("Delivery feedback updated.");
+  } catch (err) {
+    showNotif("Error updating feedback: " + err.message);
+  }
+};
+
+// --- SELL PANEL TABLE ---
+async function loadSellPanel() {
+  const q = query(collection(db, "sellItems"), orderBy("createdAt", "desc"));
+  const snapshot = await getDocs(q);
+  let data = [];
+  snapshot.forEach(docSnap => {
+    const d = docSnap.data();
+    data.push([
+      d.sellerName, d.sellerEmail, d.contactNumber, d.itemName,
+      d.category, d.description,
+      d.price ? "₹" + Number(d.price).toLocaleString("en-IN") : "-",
+      d.imageUrl ? `<a href="${d.imageUrl}" target="_blank">View</a>` : "-",
+      `<span class="status ${d.status||'pending'}">${escapeHtml(d.status||'pending')}</span>`,
+      formatTimestamp(d.createdAt),
+      `<button class="delete-btn" data-id="${docSnap.id}" data-collection="sellItems">Delete</button>`
+    ]);
+  });
+  return data;
+}
+
+// --- COUPONS TABLE ---
+async function loadCoupons() {
+  const q = query(collection(db, "coupons"), orderBy("code", "asc"));
+  const snapshot = await getDocs(q);
+  let data = [];
+  snapshot.forEach(docSnap => {
+    const d = docSnap.data();
+    data.push([
+      d.code,
+      d.type === "percent" ? d.discount + "%" : "₹" + d.discount,
+      d.type || "fixed",
+      d.type === "percent" && d.maxDiscount ? "₹" + d.maxDiscount : "-",
+      d.used ? "Yes" : "No",
+      `<button class="delete-btn" data-id="${docSnap.id}" data-collection="coupons">Delete</button>`
+    ]);
+  });
+  return data;
+}
+document.getElementById('addCouponForm').addEventListener('submit', async (e) => {
+  e.preventDefault();
+  try {
+    const code = document.getElementById('couponCode').value.trim();
+    const discount = parseFloat(document.getElementById('couponDiscount').value);
+    const type = document.getElementById('couponType').value;
+    const maxDiscount = parseFloat(document.getElementById('couponMaxDiscount').value) || null;
+    let couponData = {
+      code,
+      discount,
+      type,
+      used: false,
+      createdAt: serverTimestamp()
+    };
+    if (type === "percent" && maxDiscount) couponData.maxDiscount = maxDiscount;
+    await addDoc(collection(db, "coupons"), couponData);
+    showNotif("Coupon added!");
+    e.target.reset();
+    loadTableData("couponsTable", loadCoupons);
+  } catch (err) {
+    showNotif("Error adding coupon: " + err.message);
+  }
+});
+document.getElementById('couponType').addEventListener('change', function() {
+  document.getElementById('couponMaxDiscount').style.display = this.value === 'percent' ? 'inline-block' : 'none';
+});
+
+// --- USERS TABLE ---
+async function loadUsers() {
+  const q = query(collection(db, "users"), orderBy("createdAt", "desc"));
+  const snapshot = await getDocs(q);
+  let data = [];
+  snapshot.forEach(docSnap => {
+    const d = docSnap.data();
+    data.push([
+      d.displayName, d.email, d.phone, d.referralCode,
+      d.referralsUsed || 0,
+      formatTimestamp(d.createdAt),
+      `<button class="delete-btn" data-id="${docSnap.id}" data-collection="users">Delete</button>`
+    ]);
+  });
+  return data;
+}
+
+// --- FEEDBACKS TABLE ---
+async function loadFeedbacks() {
+  const q = query(collection(db, "feedbacks"), orderBy("createdAt", "desc"));
+  const snapshot = await getDocs(q);
+  let data = [];
+  snapshot.forEach(docSnap => {
+    const d = docSnap.data();
+    const status = d.status || "hidden";
+    let actions = "";
+    if (status !== "approved" && status !== "displayed") {
+      actions = `<button class="status-btn" onclick="approveFeedback('${docSnap.id}')">Approve</button>`;
+    } else {
+      actions = `<button class="status-btn" onclick="hideFeedback('${docSnap.id}')">Hide</button>`;
+    }
+    data.push([
+      d.name, d.email, d.feedback,
+      `<span class="status ${status}">${status}</span>`,
+      formatTimestamp(d.createdAt),
+      `${actions}<button class="delete-btn" data-id="${docSnap.id}" data-collection="feedbacks">Delete</button>`
+    ]);
+  });
+  return data;
+}
+window.approveFeedback = async function(id) {
+  try {
+    await updateDoc(doc(db, "feedbacks", id), { status: "approved" });
+    showNotif("Feedback approved.");
+    loadTableData("feedbackTable", loadFeedbacks);
+  } catch (err) {
+    showNotif("Error approving feedback: " + err.message);
+  }
+};
+window.hideFeedback = async function(id) {
+  try {
+    await updateDoc(doc(db, "feedbacks", id), { status: "hidden" });
+    showNotif("Feedback hidden.");
+    loadTableData("feedbackTable", loadFeedbacks);
+  } catch (err) {
+    showNotif("Error hiding feedback: " + err.message);
+  }
+};
+
+// --- CONTACT MESSAGES TABLE ---
+async function loadContacts() {
+  const q = query(collection(db, "contact form Messages"), orderBy("createdAt", "desc"));
+  const snapshot = await getDocs(q);
+  let data = [];
+  snapshot.forEach(docSnap => {
+    const d = docSnap.data();
+    data.push([
+      d.name, d.email, d.phone, d.message,
+      formatTimestamp(d.createdAt),
+      `<button class="delete-btn" data-id="${docSnap.id}" data-collection="contact form Messages">Delete</button>`
+    ]);
+  });
+  return data;
+}
+
+// --- CAD SUGGESTIONS TABLE ---
+async function loadCAD() {
+  const q = query(collection(db, "cadprojectSuggestions"), orderBy("timestamp", "desc"));
+  const snapshot = await getDocs(q);
+  let data = [];
+  snapshot.forEach(docSnap => {
+    const d = docSnap.data();
+    data.push([
+      d.name, d.phone, d.projectName, d.description,
+      formatTimestamp(d.timestamp),
+      `<button class="delete-btn" data-id="${docSnap.id}" data-collection="cadprojectSuggestions">Delete</button>`
+    ]);
+  });
+  return data;
+}
+
+// --- IOT SUGGESTIONS TABLE ---
+async function loadIOT() {
+  const q = query(collection(db, "iotProjectSuggestions"), orderBy("createdAt", "desc"));
+  const snapshot = await getDocs(q);
+  let data = [];
+  snapshot.forEach(docSnap => {
+    const d = docSnap.data();
+    data.push([
+      d.name, d.phone, d.projectName, d.description,
+      formatTimestamp(d.createdAt),
+      `<button class="delete-btn" data-id="${docSnap.id}" data-collection="iotProjectSuggestions">Delete</button>`
+    ]);
+  });
+  return data;
+}
+
+// --- NOTIFICATIONS TABLE (real-time, show email or phone) ---
+function loadNotifications() {
+  return new Promise(resolve => {
+    const q = query(collection(db, "notifications"), orderBy("createdAt", "desc"));
+    onSnapshot(q, snapshot => {
+      let data = [];
+      snapshot.forEach(docSnap => {
+        const d = docSnap.data();
+        let identifier = "-";
+        if (d.userEmail && d.userEmail.includes("@")) identifier = d.userEmail;
+        else if (d.userEmail) identifier = d.userEmail;
+        data.push([
+  d.createdAt ? new Date(d.createdAt.seconds * 1000).toLocaleString() : "N/A",
+  escapeHtml(identifier),
+  d.message ? d.message.replace(/<a /, '<a style="color:#00e3ca;" ') : "",
+  escapeHtml(d.type || "-"),
+  `<button class="delete-btn" data-id="${docSnap.id}" data-collection="notifications">Delete</button>`
+]);
+      });
+      applySearchAndRender("notificationsTable", data);
+      tableDataCache["notificationsTable"] = data;
+      resolve(data);
+    });
+  });
+}
+
+// --- DELETE HANDLER FOR ALL TABLES ---
+document.body.addEventListener('click', e => {
+  if (e.target.matches('.delete-btn')) {
+    const btn = e.target;
+    const docId = btn.getAttribute('data-id');
+    const collectionName = btn.getAttribute('data-collection');
+    if (!confirm("Are you sure you want to delete this entry?")) return;
+    deleteDoc(doc(db, collectionName, docId)).then(() => {
+      btn.closest('tr').remove();
+    });
+  }
+});
+
+// --- INITIAL LOAD ---
+async function loadAll() {
+  showLoading(true);
+  await loadTableData("ordersTable", loadOrders);
+  await loadTableData("sellPanelTable", loadSellPanel);
+  await loadTableData("couponsTable", loadCoupons);
+  await loadTableData("usersTable", loadUsers);
+  await loadTableData("feedbackTable", loadFeedbacks);
+  await loadTableData("contactTable", loadContacts);
+  await loadTableData("cadTable", loadCAD);
+  await loadTableData("iotTable", loadIOT);
+  await loadTableData("notificationsTable", loadNotifications);
+  showLoading(false);
+}
+
+// --- COUPON FORM TOGGLE ---
+document.getElementById('couponType').addEventListener('change', function() {
+  document.getElementById('couponMaxDiscount').style.display = this.value === 'percent' ? 'inline-block' : 'none';
+});
+ </script>
+</body>
+</html>
