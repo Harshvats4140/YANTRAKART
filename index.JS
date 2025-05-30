@@ -49,7 +49,7 @@ app.post('/submit-feedback', async (req, res) => {
 
     // 2. Add notification for admin to 'notifications' collection
     await addDoc(collection(db, 'notifications'), {
-      userEmail: 'admin@yourdomain.com', // Use your admin identifier or email here
+      userEmail: 'harshvats4140@gmail.com', // Use your admin identifier or email here
       type: 'feedback',
       message: `📝 New feedback submitted by <b>${name}</b> (${phone}):<br>${feedback}`,
       feedbackId: feedbackRef.id,
