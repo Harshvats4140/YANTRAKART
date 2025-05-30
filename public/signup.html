@@ -478,7 +478,10 @@ import {
   signInWithPhoneNumber,
   onAuthStateChanged
 } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
-import { getFirestore, doc, setDoc } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
+import {
+  getFirestore, doc, setDoc, addDoc, collection, serverTimestamp
+} from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
+
 
 const firebaseConfig = {
   apiKey: "AIzaSyAeiX6atXEITq6Jfptsc9a3Pib6swSWGZM",
@@ -516,6 +519,14 @@ tabPhone.addEventListener("click", () => {
 // DOM Elements
 const errorMsg = document.getElementById("errorMsg");
 const successMsg = document.getElementById("successMsg");
+
+
+function generateReferralCode(length = 8) {
+  const chars = "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
+  let code = "";
+  for (let i = 0; i < length; i++) code += chars.charAt(Math.floor(Math.random() * chars.length));
+  return code;
+}
 
 // Email section elements
 const nameEmail = document.getElementById("nameEmail");
@@ -728,12 +739,29 @@ signupEmailBtn.addEventListener("click", async () => {
 
   try {
     const userCredential = await createUserWithEmailAndPassword(auth, email, password);
-    await setDoc(doc(db, "users", userCredential.user.uid), {
-      name,
-      email,
-      phone: "",
-      createdAt: new Date()
-    });
+   await setDoc(doc(db, "users", userCredential.user.uid), {
+  name,
+  email,
+  phone: "",
+  referralCode: generateReferralCode(), // <-- Add this line
+  createdAt: new Date()
+});
+await addDoc(collection(db, "notifications"), {
+  userEmail: email,
+  message: `New user signed up: ${name}`,
+  type: "signup",
+  createdAt: serverTimestamp()
+});
+
+if (referralCodeUsed) {
+  await addDoc(collection(db, "notifications"), {
+    userEmail: email || (countryCode + phone),
+    message: `Referral code used: ${referralCodeUsed}`,
+    type: "referral",
+    createdAt: serverTimestamp()
+  });
+}
+
     emailVerificationSection.style.display = "block";
     await sendEmailVerification(userCredential.user);
     setSuccess("Signup successful! Please verify your email.");
@@ -896,11 +924,19 @@ signupPhoneBtn.addEventListener("click", async () => {
     const dummyEmail = countryCode.replace('+','') + phone + "@phoneuser.yantrakart";
     const userCredential = await createUserWithEmailAndPassword(auth, dummyEmail, password);
     await setDoc(doc(db, "users", userCredential.user.uid), {
-      name,
-      email: "",
-      phone: countryCode + phone,
-      createdAt: new Date()
-    });
+  name,
+  email: "",
+  phone: countryCode + phone,
+  referralCode: generateReferralCode(), // <-- Add this line
+  createdAt: new Date()
+});
+await addDoc(collection(db, "notifications"), {
+  userPhone: countryCode + phone,
+  message: `New user signed up: ${name}`,
+  type: "signup",
+  createdAt: serverTimestamp()
+});
+
     setSuccess("Signup with phone successful! Redirecting to login…");
     setTimeout(() => { window.location.href = "login.html"; }, 3000);
   } catch (e) {

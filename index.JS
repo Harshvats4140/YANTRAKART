@@ -1,20 +1,26 @@
 import express from 'express';
 import cors from 'cors';
 import { initializeApp } from 'firebase/app';
-import { getFirestore, collection, addDoc } from 'firebase/firestore';
+import {
+  getFirestore,
+  collection,
+  addDoc,
+  serverTimestamp
+} from 'firebase/firestore';
 
 const app = express();
 const port = 5000;
 
 // Firebase config (replace with your own config)
 const firebaseConfig = {
-  apiKey: "YOUR_API_KEY",
-  authDomain: "YOUR_AUTH_DOMAIN",
-  projectId: "YOUR_PROJECT_ID",
-  storageBucket: "YOUR_STORAGE_BUCKET",
-  messagingSenderId: "YOUR_MSG_SENDER_ID",
-  appId: "YOUR_APP_ID"
-};
+      apiKey: "AIzaSyAeiX6atXEITq6Jfptsc9a3Pib6swSWGZM",
+      authDomain: "cucontentprojectstore.firebaseapp.com",
+      projectId: "cucontentprojectstore",
+      storageBucket: "cucontentprojectstore.appspot.com",
+      messagingSenderId: "507592669118",
+      appId: "1:507592669118:web:07d5d1c70872b7964febef"
+    };
+    
 
 const firebaseApp = initializeApp(firebaseConfig);
 const db = getFirestore(firebaseApp);
@@ -32,16 +38,27 @@ app.post('/submit-feedback', async (req, res) => {
   }
 
   try {
-    const docRef = await addDoc(collection(db, 'feedbacks'), {
+    // 1. Add feedback to 'feedbacks' collection
+    const feedbackRef = await addDoc(collection(db, 'feedbacks'), {
       name,
       phone,
       feedback,
       approved: false,
-      timestamp: new Date()
+      timestamp: serverTimestamp()
     });
 
-    res.status(200).json({ message: 'Feedback submitted successfully.', id: docRef.id });
+    // 2. Add notification for admin to 'notifications' collection
+    await addDoc(collection(db, 'notifications'), {
+      userEmail: 'admin@yourdomain.com', // Use your admin identifier or email here
+      type: 'feedback',
+      message: `📝 New feedback submitted by <b>${name}</b> (${phone}):<br>${feedback}`,
+      feedbackId: feedbackRef.id,
+      createdAt: serverTimestamp()
+    });
+
+    res.status(200).json({ message: 'Feedback submitted successfully.', id: feedbackRef.id });
   } catch (error) {
+    console.error('Error submitting feedback:', error);
     res.status(500).json({ error: 'Failed to submit feedback.' });
   }
 });

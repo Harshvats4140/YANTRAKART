@@ -206,15 +206,75 @@
       text-shadow: none;
       background: rgba(0, 121, 107, 0.1);
     }
+    .logo-stack {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  margin-bottom: 1.2rem;
+  width: 100%;
+}
+
+.brand-title {
+  text-align: center;
+  color: #00ffe7;
+  font-size: 2rem;
+  font-weight: 700;
+  letter-spacing: 2px;
+  margin: 0.2rem 0 0.1rem 0;
+  text-shadow: 0 0 10px #00ffe7;
+  font-family: 'Poppins', sans-serif;
+  user-select: none;
+}
+
+.tagline {
+  text-align: center;
+  color: #00ffe7;
+  font-size: 1.08rem;
+  font-weight: 500;
+  letter-spacing: 0.5px;
+  margin: 0 0 0.5rem 0;
+  font-family: 'Poppins', sans-serif;
+  user-select: none;
+}
+
+/* Light mode support */
+body.light-mode .brand-title,
+body.light-mode .tagline {
+  color: #00796b;
+  text-shadow: none;
+}
+
+/* Mobile Responsive */
+@media (max-width: 600px) {
+  .logo-stack .logo {
+    width: 54px;
+    height: 54px;
+  }
+  .brand-title {
+    font-size: 1.1rem;
+    letter-spacing: 1.2px;
+    margin: 0.13rem 0 0.13rem 0;
+  }
+  .tagline {
+    font-size: 0.97rem;
+    margin-bottom: 0.3rem;
+    letter-spacing: 0.3px;
+    padding: 0 0.2rem;
+  }
+}
+
   </style>
 </head>
 <body>
    <!-- Logo Section -->
-<div class="logo-wrapper">
+<div class="logo-stack">
   <a href="index.html" class="logo-link">
     <img src="images/logo.jpg" alt="Yantrakart Logo" class="logo" />
   </a>
+  <div class="brand-title">YANTRAKART</div>
+  <div class="tagline">Smart Projects for Smart Students</div>
 </div>
+
 
 
   <!-- Theme Toggle -->

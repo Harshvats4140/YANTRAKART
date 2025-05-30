@@ -5,9 +5,13 @@
   <title>Yantrakart Payment</title>
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.8.2/jspdf.plugin.autotable.min.js"></script>
+
   <!-- Firebase SDK -->
   <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
   <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-auth-compat.js"></script>
+
   <style>
     body { background: #0d1117; color: #c9d1d9; font-family: 'Poppins', sans-serif; margin: 0; }
     .container { max-width: 420px; margin: 60px auto; background: #161b22; padding: 32px 24px; border-radius: 18px; box-shadow: 0 0 18px #00ffe7a0; }
@@ -88,7 +92,7 @@
     // --- CONFIG ---
     const UPI_ID = "harshvats4140@oksbi";
     const PAYEE_NAME = "Yantrakart";
-    const QR_IMAGE_URL = "your_qr_code_image.png"; // Replace with actual QR code image
+    const QR_IMAGE_URL = "images/qr.jpg"; // Replace with actual QR code image
 
     // --- FIREBASE INIT ---
     const firebaseConfig = {
@@ -119,6 +123,12 @@
     const upiBtn = document.getElementById("upiBtn");
     const downloadInvoice = document.getElementById("downloadInvoice");
     const paidMsg = document.getElementById("paidMsg");
+  const user = firebase.auth().currentUser;
+const customerName = user && user.displayName ? user.displayName : "";
+const customerEmail = user && user.email ? user.email : "";
+const customerPhone = user && user.phoneNumber ? user.phoneNumber : "";
+
+
 
     // --- STATE ---
     let orderData = null;
@@ -244,24 +254,92 @@
 
       // Invoice Download (PDF)
       downloadInvoice.onclick = function() {
-        const { jsPDF } = window.jspdf;
-        const doc = new jsPDF();
-        doc.setFont("helvetica", "bold");
-        doc.setFontSize(18);
-        doc.text("Yantrakart Invoice", 105, 18, { align: "center" });
-        doc.setFontSize(12);
-        doc.setFont("helvetica", "normal");
-        doc.text(`Date: ${new Date().toLocaleDateString()}`, 14, 28);
-        doc.text(`Order Status: DELIVERED`, 14, 36);
-        doc.text(`Order ID: ${order.orderId || "N/A"}`, 14, 44);
-        doc.text(`Total Amount: ₹${(order.finalAmount || 0).toLocaleString("en-IN",{minimumFractionDigits:2})}`, 14, 52);
-        doc.text("Payments:", 14, 62);
-        doc.text(`1. Advance (50%): ₹${((order.finalAmount || 0)/2).toLocaleString("en-IN",{minimumFractionDigits:2})}`, 20, 70);
-        doc.text(`2. Final (50%): ₹${((order.finalAmount || 0)/2).toLocaleString("en-IN",{minimumFractionDigits:2})}`, 20, 78);
-        doc.text("Thank you for your business!", 14, 93);
-        doc.save("Yantrakart_Invoice.pdf");
-      };
-    }
+  const { jsPDF } = window.jspdf;
+  const doc = new jsPDF();
+
+  // --- YOUR BUSINESS INFO ---
+  const business = {
+    name: "YANTRAKART",
+    address: "Near Chandigarh University Campus,Gharuan,140301",
+    phone: "+91-8708083952",
+    email: "harshvats4140@gmail.com"
+  };
+
+  // --- CUSTOMER INFO ---
+  const customer = {
+    name: order.customerName || "N/A",
+    email: order.email || "N/A",
+    phone: order.phone || "N/A",
+  };
+
+  // --- HEADER ---
+  doc.setFont("helvetica", "bold");
+  doc.setFontSize(22);
+  doc.setTextColor(0, 255, 231);
+  doc.text(business.name, 14, 16);
+
+  doc.setFontSize(12);
+  doc.setTextColor(33, 37, 41);
+  doc.setFont("helvetica", "normal");
+  doc.text("INVOICE", 150, 16);
+
+  // --- BUSINESS CONTACT ---
+  doc.setFontSize(10);
+  doc.text(`Address: ${business.address}`, 14, 24);
+  doc.text(`Phone: ${business.phone}`, 14, 29);
+  doc.text(`Email: ${business.email}`, 14, 34);
+
+  // --- CUSTOMER DETAILS ---
+  doc.setFont("helvetica", "bold");
+  doc.setFontSize(11);
+  doc.text("Bill To:", 14, 45);
+  doc.setFont("helvetica", "normal");
+  doc.setFontSize(10);
+  doc.text(`Name: ${customer.name}`, 14, 50);
+  doc.text(`Email: ${customer.email}`, 14, 55);
+  doc.text(`Phone: ${customer.phone}`, 14, 60);
+
+  // --- INVOICE META ---
+  doc.setFontSize(10);
+  doc.text(`Invoice Date: ${new Date().toLocaleDateString()}`, 150, 24);
+  doc.text(`Order ID: ${order.orderId || "N/A"}`, 150, 29);
+  doc.text(`Status: DELIVERED`, 150, 34);
+
+  // --- PROJECT DETAILS TABLE ---
+  const tableColumn = ["Description", "Amount (₹)"];
+  const tableRows = [
+    ["Project", order.projectName || "N/A"],
+    ["Original Price", (order.projectPrice || 0).toLocaleString("en-IN",{minimumFractionDigits:2})],
+    ["Discount", (order.discount || 0).toLocaleString("en-IN",{minimumFractionDigits:2})],
+    ["Total Price", (order.finalAmount || 0).toLocaleString("en-IN",{minimumFractionDigits:2})],
+    ["Advance Paid (50%)", ((order.finalAmount || 0)/2).toLocaleString("en-IN",{minimumFractionDigits:2})],
+    ["Final Paid (50%)", ((order.finalAmount || 0)/2).toLocaleString("en-IN",{minimumFractionDigits:2})]
+  ];
+
+  doc.autoTable({
+    startY: 75,
+    head: [tableColumn],
+    body: tableRows,
+    theme: 'grid',
+    headStyles: { fillColor: [0, 255, 231], textColor: [13, 17, 23], fontStyle: 'bold' },
+    bodyStyles: { textColor: [33, 37, 41] },
+    styles: { font: "helvetica", fontSize: 11, cellPadding: 3 },
+    columnStyles: { 1: { halign: 'right' } }
+  });
+
+  // --- FOOTER ---
+  doc.setFontSize(12);
+  doc.setTextColor(67, 233, 123);
+  doc.text("Thank you for Ordering with us!", 105, doc.lastAutoTable.finalY + 18, { align: "center" });
+
+  doc.setFontSize(10);
+  doc.setTextColor(180, 180, 180);
+  doc.text(`For support, contact: ${business.email} | ${business.phone}`, 105, doc.lastAutoTable.finalY + 26, { align: "center" });
+
+  doc.save("Yantrakart_Invoice.pdf");
+      }
+};
+
 
     // --- ENTRY LOGIC ---
     // Try to get orderId from localStorage or URL
@@ -283,6 +361,7 @@
         return;
       }
       loadOrder(id);
+    
     };
   </script>
 </body>

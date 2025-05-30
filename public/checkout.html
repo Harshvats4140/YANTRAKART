@@ -194,11 +194,82 @@
         padding: 1rem;
       }
     }
+    .logo-stack {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  margin-bottom: 1.2rem;
+  width: 100%;
+}
+
+.logo-img {
+  width: 70px;
+  height: 70px;
+  object-fit: contain;
+  border-radius: 16px;
+  box-shadow: 0 0 16px var(--accent-color);
+  background: #fff;
+  padding: 0.4rem;
+  margin-bottom: 0.3rem;
+}
+
+.brand-title {
+  text-align: center;
+  color: var(--accent-color);
+  font-size: 2rem;
+  font-weight: 700;
+  letter-spacing: 2px;
+  margin: 0.2rem 0 0.1rem 0;
+  text-shadow: 0 0 10px var(--accent-color);
+  font-family: 'Poppins', sans-serif;
+  user-select: none;
+}
+
+.tagline {
+  text-align: center;
+  color: var(--accent-color);
+  font-size: 1.05rem;
+  font-weight: 500;
+  letter-spacing: 0.5px;
+  margin-bottom: 0.5rem;
+  font-family: 'Poppins', sans-serif;
+  user-select: none;
+}
+
+/* Mobile Responsive */
+@media (max-width: 600px) {
+  .logo-img {
+    width: 48px;
+    height: 48px;
+  }
+  .brand-title {
+    font-size: 1.1rem;
+    letter-spacing: 1.2px;
+    margin: 0.13rem 0 0.13rem 0;
+  }
+  .tagline {
+    font-size: 0.92rem;
+    margin-bottom: 0.3rem;
+    letter-spacing: 0.3px;
+    padding: 0 0.2rem;
+  }
+}
+.order-for-choice {
+  display: flex;
+  gap: 1.5em;
+  margin-bottom: 1em;
+  align-items: center;
+  font-size: 1.05em;
+}
+
   </style>
 </head>
 <body>
-  <h1>YANTRAKART</h1>
-
+  <div class="logo-stack">
+  <img src="images/logo.jpg" alt="Yantrakart Logo" class="logo-img" />
+  <div class="brand-title">YANTRAKART</div>
+  <div class="tagline">Smart Projects for Smart Students</div>
+</div>
   <div class="checkout-box">
     <h2>Checkout</h2>
 
@@ -211,11 +282,19 @@
     </div>
 
     <form id="checkout-form" novalidate>
+      <div class="order-for-choice">
+  <label><input type="radio" name="orderFor" value="self" checked /> For Myself</label>
+  <label><input type="radio" name="orderFor" value="other" /> For Someone Else</label>
+</div>
+
       <label for="customerName">Your Name</label>
       <input type="text" id="customerName" name="customerName" placeholder="Enter your full name" required />
 
       <label for="customerPhone">Phone Number</label>
       <input type="tel" id="customerPhone" name="customerPhone" placeholder="Enter your 10-digit phone number" pattern="^\d{10}$" required />
+
+      <label for="customerEmail">Email</label>
+<input type="text" id="customerEmail" name="customerEmail" placeholder="Enter your email" required />
 
       <label for="referralCode">Referral Code (optional)</label>
       <input type="text" id="referralCode" name="referralCode" placeholder="Enter referral code" maxlength="20" />
@@ -282,6 +361,7 @@
       let projectName = getQueryParam('title');
       let projectDescription = getQueryParam('description');
       let projectPriceRaw = getQueryParam('price');
+      
 
       // Fallback to localStorage if not found
       if (!projectName) projectName = localStorage.getItem('projectName') || 'Unknown Project';
@@ -379,6 +459,7 @@
 
       const customerNameInput = checkoutForm.customerName.value.trim();
       const customerPhone = checkoutForm.customerPhone.value.trim();
+      const customerEmail = customerEmailInput.value.trim();
       const referralCode = referralCodeInput.value.trim();
       const couponCode = couponCodeInput.value.trim();
 
@@ -386,10 +467,14 @@
         errorMsg.textContent = "Please enter your name.";
         return;
       }
-      if (!/^\d{10}$/.test(customerPhone)) {
-        errorMsg.textContent = "Please enter a valid 10-digit phone number.";
-        return;
-      }
+      if (!customerEmail || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(customerEmail)) {
+    errorMsg.textContent = "Please enter a valid email address.";
+    return;
+  }
+  if (!customerPhone || !/^\d{10}$/.test(customerPhone)) {
+    errorMsg.textContent = "Please enter a valid 10-digit phone number.";
+    return;
+  }
 
       // Use username from localStorage if available, else input
       const storedUsername = localStorage.getItem('username');
@@ -404,6 +489,7 @@
           userId: auth.currentUser ? auth.currentUser.uid : null,
           customerName,
           customerPhone,
+          customerEmail,
           referralCode: referralCode || null,
           couponCode: couponCode || null,
           discount: couponDiscount,
@@ -412,6 +498,7 @@
           projectDescription,
           projectPrice,
           status: "pending",
+          paymentState: "pending",
           createdAt: serverTimestamp(),
         };
 
@@ -434,7 +521,7 @@
         localStorage.setItem("orderId", orderId);
         localStorage.setItem("finalPrice", finalAmount);
         localStorage.setItem("orderStatus", "approved"); // By default, set as "approved"
-        localStorage.setItem("paymentState", "none");
+        localStorage.setItem("paymentState", "pending");
 
         // Show success message with order ID and copy button
        successMsg.innerHTML = `
@@ -469,7 +556,56 @@
         errorMsg.textContent = "Error placing order: " + error.message;
       }
     });
+const customerNameInput = document.getElementById('customerName');
+const customerPhoneInput = document.getElementById('customerPhone');
+const customerEmailInput = document.getElementById('customerEmail');
 
+function autofillUserDetails(user) {
+  let name = '', email = '', phone = '';
+  if (user) {
+    name = user.displayName || '';
+    email = user.email || '';
+    phone = user.phoneNumber ? user.phoneNumber.replace(/^\+91/, '') : '';
+  } else {
+    name = localStorage.getItem('username') || '';
+    email = localStorage.getItem('useremail') || '';
+    phone = localStorage.getItem('userphone') || '';
+  }
+  customerNameInput.value = name;
+  customerEmailInput.value = email;
+  customerPhoneInput.value = phone;
+}
+
+function setFieldsReadOnly(readonly) {
+  // Only lock if value is present, else keep editable
+  customerNameInput.readOnly = readonly && !!customerNameInput.value;
+  customerEmailInput.readOnly = readonly && !!customerEmailInput.value;
+  customerPhoneInput.readOnly = readonly && !!customerPhoneInput.value;
+
+  customerNameInput.style.background = (customerNameInput.readOnly ? "#22272e" : "");
+  customerEmailInput.style.background = (customerEmailInput.readOnly ? "#22272e" : "");
+  customerPhoneInput.style.background = (customerPhoneInput.readOnly ? "#22272e" : "");
+}
+
+
+import { onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
+let currentUser = null;
+onAuthStateChanged(auth, (user) => {
+  currentUser = user;
+  autofillUserDetails(user);
+  setFieldsReadOnly(true);
+});
+
+document.querySelectorAll('input[name="orderFor"]').forEach(radio => {
+  radio.addEventListener('change', (e) => {
+    if (e.target.value === "self") {
+      autofillUserDetails(currentUser);
+      setFieldsReadOnly(true);
+    } else {
+      setFieldsReadOnly(false);
+    }
+  });
+});
     // Initialize product info on page load
     loadProductDetails();
   </script>
