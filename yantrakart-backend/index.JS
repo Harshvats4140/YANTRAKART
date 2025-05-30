@@ -21,12 +21,12 @@ const PORT = 5000;
 app.use(cors());
 app.use(bodyParser.json());
 
-// 🔑 Firebase config
+// 🔑 Firebase config (storageBucket fixed)
 const firebaseConfig = {
   apiKey: "AIzaSyAeiX6atXEITq6Jfptsc9a3Pib6swSWGZM",
   authDomain: "cucontentprojectstore.firebaseapp.com",
   projectId: "cucontentprojectstore",
-  storageBucket: "cucontentprojectstore.firebasestorage.app",
+  storageBucket: "cucontentprojectstore.appspot.com", // <-- FIXED HERE
   messagingSenderId: "507592669118",
   appId: "1:507592669118:web:07d5d1c70872b7964febef",
 };
@@ -39,6 +39,11 @@ console.log("✅ Firebase initialized");
 // 🔽 POST route: Submit feedback
 app.post('/submit-feedback', async (req, res) => {
   const { name, message } = req.body;
+
+  // Basic input validation
+  if (!name || !message || typeof name !== 'string' || typeof message !== 'string') {
+    return res.status(400).send({ success: false, message: 'Name and message are required.' });
+  }
 
   try {
     await addDoc(collection(db, 'feedbacks'), {
@@ -54,7 +59,7 @@ app.post('/submit-feedback', async (req, res) => {
   }
 });
 
-// 🔽 GET route: View approved feedbacks
+// 🔽 GET route: View approved feedbacks (now includes doc ID)
 app.get('/approved-feedbacks', async (req, res) => {
   try {
     const feedbackRef = collection(db, 'feedbacks');
@@ -62,8 +67,8 @@ app.get('/approved-feedbacks', async (req, res) => {
     const snapshot = await getDocs(q);
 
     const approved = [];
-    snapshot.forEach(doc => {
-      approved.push(doc.data());
+    snapshot.forEach(docSnap => {
+      approved.push({ id: docSnap.id, ...docSnap.data() });
     });
 
     res.status(200).send(approved);

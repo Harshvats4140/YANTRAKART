@@ -592,6 +592,111 @@ body.light-mode input:checked + .slider {
     body.light-mode #modalShare a:focus {
       outline: 2px solid #009688;
     }
+    @media (max-width: 600px) {
+  body {
+    padding: 0.5rem;
+  }
+  .header-bar {
+    flex-direction: column;
+    align-items: stretch;
+    padding: 0.4rem 0.2rem;
+    gap: 0.7rem;
+  }
+  .header-left {
+    flex-direction: row;
+    align-items: center;
+    gap: 0.5rem;
+    text-align: center;
+    margin-left: 0;
+  }
+  .header-left .logo {
+    height: 40px;
+    margin-left: 0;
+  }
+  .header-left .tagline {
+    font-size: 0.95rem;
+    margin-left: 0;
+    text-align: center;
+  }
+  .header-center {
+    font-size: 1.1rem;
+    margin: 0.4rem 0;
+    text-align: center;
+    position: static;
+    transform: none;
+    white-space: normal;
+    pointer-events: auto;
+  }
+  .header-right {
+    gap: 0.7rem;
+    width: 100%;
+    justify-content: flex-start;
+  }
+  .dashboard-link {
+    font-size: 1rem;
+    padding: 0.5rem 1rem;
+    margin-right: 0;
+  }
+  .switch {
+    width: 40px;
+    height: 22px;
+  }
+  .slider:before {
+    height: 16px;
+    width: 16px;
+    left: 3px;
+    bottom: 3px;
+  }
+  .smart-description {
+    font-size: 1.02rem;
+    padding: 0 0.2rem;
+  }
+  .search-sort-bar {
+    flex-direction: column;
+    gap: 0.5rem;
+    padding: 0 0.2rem;
+  }
+  .projects-container {
+    grid-template-columns: 1fr;
+    gap: 1rem;
+    padding: 0 0.2rem;
+  }
+  .project-card {
+    padding: 1rem 0.5rem;
+    font-size: 0.97rem;
+  }
+  .project-img {
+    height: 110px;
+    border-radius: 10px;
+  }
+  .suggestion-container {
+    padding: 1rem 0.5rem;
+    border-radius: 12px;
+    font-size: 0.98rem;
+    width: 98vw;
+    max-width: 99vw;
+  }
+  form#suggestionForm {
+    gap: 0.6rem;
+  }
+  footer {
+    font-size: 0.85rem;
+    padding: 0.6rem 0.2rem;
+    flex-direction: column;
+    gap: 0.4rem;
+  }
+  footer img.logo {
+    height: 22px;
+  }
+  #modalContent {
+    padding: 0.7rem 0.2rem;
+    max-width: 96vw;
+  }
+  #modalImg {
+    max-width: 120px;
+  }
+}
+
   </style>
 </head>
 <body>

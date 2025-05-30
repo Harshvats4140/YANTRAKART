@@ -315,12 +315,73 @@
       text-align: center;
       margin-bottom: 1rem;
     }
+    .logo-stack {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  margin-bottom: 1.2rem;
+  width: 100%;
+}
+
+.brand-title {
+  text-align: center;
+  color: var(--accent-color);
+  font-size: 2rem;
+  font-weight: 700;
+  letter-spacing: 2px;
+  margin: 0.2rem 0 0.2rem 0;
+  text-shadow: 0 0 10px var(--accent-color);
+  font-family: 'Poppins', sans-serif;
+  user-select: none;
+}
+
+.tagline {
+  text-align: center;
+  color: var(--accent-color);
+  font-size: 1.08rem;
+  font-weight: 500;
+  letter-spacing: 0.5px;
+  margin: 0 0 0.5rem 0;
+  font-family: 'Poppins', sans-serif;
+  user-select: none;
+}
+
+html[data-theme='light'] .brand-title,
+html[data-theme='light'] .tagline {
+  color: var(--accent-color-light);
+  text-shadow: none;
+}
+/* --- Mobile Responsive Styles --- */
+@media (max-width: 500px) {
+  .logo-stack {
+    margin-bottom: 0.8rem;
+  }
+  .logo-stack .logo {
+    width: 54px;
+    max-width: 90vw;
+  }
+  .brand-title {
+    font-size: 1.2rem;
+    letter-spacing: 1.2px;
+    margin: 0.13rem 0 0.13rem 0;
+  }
+  .tagline {
+    font-size: 0.97rem;
+    margin-bottom: 0.3rem;
+    letter-spacing: 0.3px;
+    padding: 0 0.2rem;
+  }
+}
   </style>
 </head>
 <body>
 
+  <div class="logo-stack">
   <img src="images/logo.jpg" alt="Yantrakart Logo" class="logo" />
-  <h1>YANTRAKART</h1>
+  <div class="brand-title">YANTRAKART</div>
+  <div class="tagline">Smart Projects for Smart Students</div>
+</div>
+
 
   <div class="login-box" role="main" aria-label="User login form">
     <button id="themeToggle" aria-label="Toggle light/dark theme" title="Toggle light/dark theme" tabindex="0">
@@ -365,6 +426,11 @@
     <button class="guest-btn" onclick="guestLogin()" aria-label="Continue as guest">
       <i class="fa-solid fa-user-secret"></i> Continue as Guest
     </button>
+    <!-- Admin Login Button -->
+<button onclick="window.location.href='admin.html'" style="background:#222; color:#00ffe7; border:1px solid #00ffe7; margin-top:0.5rem;">
+  <i class="fa-solid fa-user-shield"></i> Admin Login
+</button>
+
     <div id="guestMessage" role="alert" aria-live="polite" style="display:none; 
          background: #00ffe7; 
          color: #0d1117; 
@@ -502,48 +568,52 @@
 
     // --- Login handler ---
     loginBtn.onclick = async (e) => {
-      e.preventDefault();
-      const value = identifier.value.trim();
-      const pwd = password.value.trim();
-      loginBtn.disabled = true;
-      loginBtn.innerHTML = `<span class="spinner" aria-hidden="true"></span> Logging in...`;
-      showMessage("");
-      let emailForLogin;
-      if (isEmail(value)) {
-        emailForLogin = value;
-      } else if (is10DigitIndianPhone(value)) {
-        emailForLogin = toDummyEmail(value);
-      } else {
-        showMessage("Please enter a valid email or 10-digit Indian phone number.", "error");
-        loginBtn.disabled = false;
-        loginBtn.textContent = "Login";
-        return;
-      }
-      try {
-        const rememberMe = rememberMeCheckbox.checked;
-        if (rememberMe) {
-          await setPersistence(auth, browserLocalPersistence);
-        } else {
-          await setPersistence(auth, browserSessionPersistence);
-        }
-        const userCredential = await signInWithEmailAndPassword(auth, emailForLogin, pwd);
-        // Only check email verification for real emails
-        if (isEmail(value) && !userCredential.user.emailVerified) {
-          showMessage("Email not verified. Sending verification email...", "error");
-          await sendEmailVerification(userCredential.user);
-          showMessage("Verification email sent! Please check your inbox.", "success");
-          loginBtn.disabled = false;
-          loginBtn.textContent = "Login";
-          return;
-        }
-        window.location.href = "index.html";
-      } catch (e) {
-        showMessage(e.message, "error");
-      } finally {
-        loginBtn.disabled = false;
-        loginBtn.textContent = "Login";
-      }
-    };
+  e.preventDefault();
+  const value = identifier.value.trim();
+  const pwd = password.value.trim();
+  loginBtn.disabled = true;
+  loginBtn.innerHTML = `<span class="spinner" aria-hidden="true"></span> Logging in...`;
+  showMessage("");
+  let emailForLogin;
+  if (isEmail(value)) {
+    emailForLogin = value;
+  } else if (is10DigitIndianPhone(value)) {
+    emailForLogin = toDummyEmail(value);
+  } else {
+    showMessage("Please enter a valid email or 10-digit Indian phone number.", "error");
+    loginBtn.disabled = false;
+    loginBtn.textContent = "Login";
+    return;
+  }
+  try {
+    const rememberMe = rememberMeCheckbox.checked;
+    if (rememberMe) {
+      await setPersistence(auth, browserLocalPersistence);
+    } else {
+      await setPersistence(auth, browserSessionPersistence);
+    }
+    const userCredential = await signInWithEmailAndPassword(auth, emailForLogin, pwd);
+    // Only check email verification for real emails
+    if (isEmail(value) && !userCredential.user.emailVerified) {
+      showMessage("Email not verified. Sending verification email...", "error");
+      await sendEmailVerification(userCredential.user);
+      showMessage("Verification email sent! Please check your inbox.", "success");
+      loginBtn.disabled = false;
+      loginBtn.textContent = "Login";
+      return;
+    }
+    window.location.href = "index.html";
+  } catch (e) {
+    if (e.code === "auth/user-not-found") {
+      showMessage(`This ${isEmail(value) ? "email" : "phone number"} is not registered. <a href="signup.html" style="color:#00c2ab;">Create an account?</a>`, "error");
+    } else {
+      showMessage(e.message, "error");
+    }
+  } finally {
+    loginBtn.disabled = false;
+    loginBtn.textContent = "Login";
+  }
+};
 
     // --- Forgot password ---
     window.forgotPassword = async () => {

@@ -1,0 +1,15 @@
+{
+  "hosting": {
+    "public": "public",
+    "redirects": [
+      {
+        "source": "/",
+        "destination": "/login.html",
+        "type": 302
+      }
+    ]
+  },
+  "functions": {
+    "source": "functions"
+  }
+}
