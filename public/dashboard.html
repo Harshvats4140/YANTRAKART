@@ -1022,7 +1022,7 @@ function showTrackOrder() {
         <div><b>Price:</b> ₹${order.projectPrice ? Number(order.projectPrice).toLocaleString("en-IN") : "-"}</div>
         <div><b>Final Amount:</b> ₹${order.finalAmount ? Number(order.finalAmount).toLocaleString("en-IN") : "-"}</div>
         <div><b>Created At:</b> ${order.createdAt && order.createdAt.seconds ? new Date(order.createdAt.seconds * 1000).toLocaleString() : "-"}</div>
-        ${order.status === "delivered" && order.paymentState === "fullPaid" ? `<div style="margin-top:1em;"><a href="order-details.html?orderId=${order.orderId}" target="_blank" style="color:#43e97b;font-weight:600;">⬇️ Download Invoice</a></div>` : ""}
+        ${order.status === "delivered" && order.paymentState === "fullPaid" ? `<div style="margin-top:1em;"><a href="payment.html?orderId=${order.orderId}" target="_blank" style="color:#43e97b;font-weight:600;">⬇️ Download Invoice</a></div>` : ""}
       `;
     } catch (err) {
       orderTrackingResult.innerHTML = `<span style='color:#ff3864'>Error: ${err.message}</span>`;
@@ -1288,6 +1288,22 @@ async function showNotifications() {
     userIdentifier = user.email.endsWith("@phoneuser.yantrakart") ? userDoc.data().phone : user.email;
   }
 
+  // 1. Mark all unread notifications as read
+  db.collection("notifications")
+    .where("userEmail", "==", userIdentifier)
+    .where("read", "==", false)
+    .get()
+    .then(snapshot => {
+      if (!snapshot.empty) {
+        const batch = db.batch();
+        snapshot.forEach(doc => {
+          batch.update(doc.ref, { read: true });
+        });
+        return batch.commit();
+      }
+    });
+
+  // 2. Show all notifications
   db.collection("notifications")
     .where("userEmail", "==", userIdentifier)
     .orderBy("createdAt", "desc")
@@ -1303,6 +1319,7 @@ async function showNotifications() {
             html += `<li style="margin-bottom:18px;list-style:none;">
               <div style="color:#00e3ca;font-weight:600;">
                 ${d.createdAt ? new Date(d.createdAt.seconds*1000).toLocaleString() : ""}
+                ${!d.read ? '<span style="color:#ff3864; margin-left:8px;">● Unread</span>' : ''}
               </div>
               <div>${d.message}</div>
             </li>`;
@@ -1321,6 +1338,7 @@ async function showNotifications() {
     );
 }
 
+
 // Notification badge update (real-time)
 getCurrentUser().then(async user => {
   if (!user) return;
@@ -1331,12 +1349,14 @@ getCurrentUser().then(async user => {
   }
   db.collection("notifications")
     .where("userEmail", "==", userIdentifier)
+    .where("read", "==", false) // Only unread
     .onSnapshot(snapshot => {
       const badge = document.getElementById("notif-badge");
       badge.textContent = snapshot.size;
       badge.style.display = snapshot.size ? "inline-block" : "none";
     });
 });
+
 
 // Logout and auth state
 function logout() {
