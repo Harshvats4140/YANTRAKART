@@ -145,7 +145,7 @@ This project is licensed under the **ISC License**.
 
 - **Author**: Harsh Vats
 - **GitHub**: [Harshvats4140](https://github.com/Harshvats4140)
-- **Email**: your-email@example.com
+- **Email**: harshvats4140@gmail.com
 
 ---
 
