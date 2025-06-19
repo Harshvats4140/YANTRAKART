@@ -1,90 +1,81 @@
 # 🚀 YANTRAKART
 
-Welcome to **YANTRAKART** – Your one-stop IoT store and management platform!  
-This project is designed to help you manage, monitor, and interact with IoT devices seamlessly. 🌐🔌
-
----
+Welcome to YANTRAKART – Your one-stop IoT store and management platform! This project is designed to help you manage, monitor, and interact with IoT devices seamlessly. 🌐🔌
 
 ## 📦 Features
 
-- 🛒 **E-commerce for IoT Devices**: Browse and purchase IoT products.
-- 📊 **Dashboard**: Real-time analytics and device management.
-- 👤 **Admin Panel**: Manage products, users, and orders.
-- 🔒 **Authentication**: Secure login and registration.
-- ☁️ **Firebase Integration**: Fast, scalable backend.
-- ⚡ **Express.js API**: Robust and flexible server-side logic.
-- 🌍 **Deployed on Vercel & Firebase Hosting**: Fast, reliable, and global.
-
----
+- 🛒 **E-commerce for IoT Devices:** Browse and purchase IoT products.
+- 📊 **Dashboard:** Real-time analytics and device management.
+- 👤 **Admin Panel:** Manage products, users, and orders.
+- 🔒 **Authentication:** Secure login and registration.
+- ☁️ **Firebase Integration:** Fast, scalable backend.
+- ⚡ **Express.js API:** Robust and flexible server-side logic.
+- 🌍 **Deployed on Vercel & Firebase Hosting:** Fast, reliable, and global.
+- ✅ **Updated Features:**  
+  - Modern, responsive UI for IoT product browsing and management.  
+  - Real-time Q&A board with like/unlike and threaded replies.  
+  - Comprehensive admin panel with role-based access control.  
+  - Firebase Storage integration for file uploads.  
+  - Dark/Light mode toggle.  
+  - Detailed components catalog with search, sort, and modal details.  
+  - Suggestion forms for projects and components.  
+  - Robust authentication and authorization.  
+  - Deployment on Vercel and Firebase Hosting for global availability.
 
 ## 🛠️ Tech Stack
 
-- **Frontend**: HTML, CSS, JavaScript
-- **Backend**: Node.js, Express.js
-- **Database/Hosting**: Firebase
-- **Deployment**: Vercel, Firebase Hosting
-- **Version Control**: Git & GitHub
-
----
+- **Frontend:** HTML, CSS, JavaScript
+- **Backend:** Node.js, Express.js
+- **Database/Hosting:** Firebase
+- **Deployment:** Vercel, Firebase Hosting
+- **Version Control:** Git & GitHub
 
 ## 🚀 Getting Started
 
-### 1. **Clone the Repository**
-
+1. **Clone the Repository**
 git clone https://github.com/Harshvats4140/YANTRAKART.git
 cd YANTRAKART
 
 
 text
 
-### 2. **Install Dependencies**
-
+2. **Install Dependencies**
 npm install
 
 
 text
 
-### 3. **Run Locally**
-
+3. **Run Locally**
 npm start
 
 
 text
-Open [http://localhost:3000](http://localhost:3000) in your browser.
+Open http://localhost:3000 in your browser.
 
-### 4. **Firebase Setup**
-
+4. **Firebase Setup**
 - Install Firebase CLI:
-npm install -g firebase-tools
-
-
-text
+  ```
+  npm install -g firebase-tools
+  ```
 - Login and initialize:
-firebase login
-firebase init
-
-
-text
+  ```
+  firebase login
+  firebase init
+  ```
 - Deploy:
-firebase deploy
+  ```
+  firebase deploy
+  ```
 
-
-text
-
-### 5. **Vercel Deployment**
-
+5. **Vercel Deployment**
 - Install Vercel CLI:
-npm install -g vercel
-
-
-text
+  ```
+  npm install -g vercel
+  ```
 - Deploy:
-vercel
-
-
-text
-
----
+  ```
+  vercel
+  ```
 
 ## 🗂️ Project Structure
 
@@ -101,17 +92,13 @@ YANTRAKART/
 
 text
 
----
-
 ## ⚙️ Scripts
 
-| Script         | Description            |
-| -------------- | ---------------------- |
-| `npm start`    | Start the server       |
-| `firebase deploy` | Deploy to Firebase Hosting |
-| `vercel`       | Deploy to Vercel       |
-
----
+| Script          | Description                   |
+|-----------------|------------------------------|
+| npm start       | Start the server              |
+| firebase deploy | Deploy to Firebase Hosting    |
+| vercel          | Deploy to Vercel             |
 
 ## 🔐 Environment Variables
 
@@ -123,32 +110,29 @@ FIREBASE_AUTH_DOMAIN=your-auth-domain
 
 text
 
----
-
 ## 👨‍💻 Contributing
 
-Contributions are welcome!  
-1. Fork the repo 🍴  
-2. Create a new branch 🌱  
-3. Commit your changes 💡  
-4. Open a Pull Request 🚀
+Contributions are welcome!
 
----
+- Fork the repo 🍴
+- Create a new branch 🌱
+- Commit your changes 💡
+- Open a Pull Request 🚀
 
 ## 📝 License
 
-This project is licensed under the **ISC License**.
-
----
+This project is licensed under the ISC License.
 
 ## 📞 Contact
 
-- **Author**: Harsh Vats
-- **GitHub**: [Harshvats4140](https://github.com/Harshvats4140)
-- **Email**: harshvats4140@gmail.com
-
----
+- Author: Harsh Vats
+- GitHub: [Harshvats4140](https://github.com/Harshvats4140)
+- Email: harshvats4140@gmail.com
 
 ## ⭐️ Show Your Support
 
 If you like this project, please ⭐️ the repo and share it!
+
+---
+
+Visit yantrakart.vercel.app or https://yantrakartira.web.app to explore the live project
