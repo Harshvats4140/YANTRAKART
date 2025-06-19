@@ -19,63 +19,105 @@
       min-height: 100vh;
       box-sizing: border-box;
     }
-    .header-bar {
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      width: 100%;
-      max-width: 900px;
-      margin: 0 auto 2rem auto;
-      padding: 0 1rem;
-      box-sizing: border-box;
-      position: relative;
-    }
-    .header-left {
-      display: flex;
-      flex-direction: column;
-      align-items: flex-start;
-      gap: 0.2rem;
-    }
-    .header-left .logo {
-      height: 100px;
-      filter: drop-shadow(0 0 6px #00ffe7);
-      margin-left: 107px;
-    }
-    .header-left .tagline {
-      font-size: 1.15rem;
-      color: #00ffe7;
-      font-weight: 500;
-      letter-spacing: 0.5px;
-      text-align: left;
-    }
-    .header-center {
-      position: absolute;
-      left: 50%;
-      transform: translateX(-50%);
-      color: #00ffe7;
-      text-shadow: 0 0 10px #00ffe7;
-      font-size: 2.2rem;
-      margin: 0;
-      white-space: nowrap;
-      pointer-events: none;
-    }
-    .header-right {
-      display: flex;
-      align-items: center;
-      gap: 1.2rem;
-    }
-    .dashboard-link {
-      color: #00ffe7;
-      font-weight: 600;
-      text-decoration: none;
-      font-size: 1.08rem;
-      transition: color 0.2s;
-      margin-right: 0.3rem;
-    }
-    .dashboard-link:hover {
-      color: #00b89e;
-      text-decoration: underline;
-    }
+    /* Header Bar Styles */
+   .header-bar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  width: 100%;
+  max-width: 900px;
+  margin: 0 auto 2rem auto;
+  padding: 0 1rem;
+  box-sizing: border-box;
+  position: relative;
+}
+.header-left {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 0.2rem;
+}
+.header-left .logo {
+  height: 100px;
+  filter: drop-shadow(0 0 6px #00ffe7);
+   margin-left: 107px; 
+}
+.header-left .tagline {
+  font-size: 1.15rem;
+  color: #00ffe7;
+  font-weight: 500;
+  letter-spacing: 0.5px;
+  text-align: left;
+}
+.header-center {
+  position: absolute;
+  left: 50%;
+  transform: translateX(-50%);
+  color: #00ffe7;
+  text-shadow: 0 0 10px #00ffe7;
+  font-size: 5000rem;
+  margin: 0;
+  white-space: nowrap;
+  pointer-events: none;
+}
+.header-right {
+  display: flex;
+  align-items: center;
+  gap: 1.2rem;
+}
+
+
+.header-center {
+  position: absolute;
+  left: 50%;
+  transform: translateX(-50%);
+  color: #00ffe7;
+  text-shadow: 0 0 10px #00ffe7;
+  font-size: 2.2rem;
+  margin: 0;
+  white-space: nowrap;
+  pointer-events: none; /* So clicks pass through if needed */
+}
+
+.header-right {
+  display: flex;
+  align-items: center;
+  gap: 1.2rem;
+}
+
+.dashboard-link {
+  color: #00ffe7;
+  font-weight: 600;
+  text-decoration: none;
+  font-size: 1.08rem;
+  transition: color 0.2s;
+  margin-right: 0.3rem;
+}
+.dashboard-link:hover {
+  color: #00b89e;
+  text-decoration: underline;
+}
+@media (max-width: 600px) {
+  .header-bar {
+    flex-direction: column;
+    align-items: stretch;
+    padding: 0;
+    position: static;
+  }
+  .header-center {
+    position: static;
+    transform: none;
+    text-align: center;
+    margin: 0.5rem 0;
+    pointer-events: auto;
+  }
+  .header-left {
+    align-items: center;
+    text-align: center;
+  }
+}
+
+    /* Toggle switch */
     .switch {
       position: relative;
       display: inline-block;
@@ -115,23 +157,29 @@
     input:checked + .slider:before {
       transform: translateX(24px);
     }
+    /* Responsive: Stack on mobile */
     @media (max-width: 600px) {
       .header-bar {
         flex-direction: column;
-        align-items: stretch;
+        align-items: flex-start;
+        gap: 0.8rem;
         padding: 0;
-        position: static;
-      }
-      .header-center {
-        position: static;
-        transform: none;
-        text-align: center;
-        margin: 0.5rem 0;
-        pointer-events: auto;
       }
       .header-left {
-        align-items: center;
-        text-align: center;
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 0.3rem;
+      }
+      .header-right {
+        width: 100%;
+        justify-content: flex-start;
+        gap: 1rem;
+      }
+      .header-left h1 {
+        font-size: 1.3rem;
+      }
+      .header-left .logo {
+        height: 48px;
       }
     }
     .smart-description {
@@ -147,34 +195,47 @@
       margin-bottom: 1.5rem;
     }
     body.light-mode {
-      background: #f7fafb;
-      color: #1a1a1a;
-    }
-    body.light-mode .header-bar {
-      background: none;
-    }
-    body.light-mode .header-left .logo {
-      filter: drop-shadow(0 0 6px #009688);
-    }
-    body.light-mode .header-left .tagline {
-      color: #00796b;
-    }
-    body.light-mode .header-center {
-      color: #00796b;
-      text-shadow: none;
-    }
-    body.light-mode .dashboard-link {
-      color: #009688;
-    }
-    body.light-mode .dashboard-link:hover {
-      color: #00796b;
-    }
-    body.light-mode .slider {
-      background-color: #eee;
-    }
-    body.light-mode input:checked + .slider {
-      background-color: #009688;
-    }
+  background: #f7fafb;
+  color: #1a1a1a;
+}
+
+body.light-mode .header-bar {
+  background: none;
+}
+
+/* Logo: add a subtle drop shadow for visibility in light mode */
+body.light-mode .header-left .logo {
+  filter: drop-shadow(0 0 6px #009688);
+}
+
+/* Tagline: use a darker, teal color for contrast */
+body.light-mode .header-left .tagline {
+  color: #00796b;
+}
+
+/* Center heading: teal color, no text shadow for a crisp look */
+body.light-mode .header-center {
+  color: #00796b;
+  text-shadow: none;
+}
+
+/* Dashboard link: use teal for better readability */
+body.light-mode .dashboard-link {
+  color: #009688;
+}
+body.light-mode .dashboard-link:hover {
+  color: #00796b;
+}
+
+/* Toggle switch: lighter background for slider */
+body.light-mode .slider {
+  background-color: #eee;
+}
+body.light-mode input:checked + .slider {
+  background-color: #009688;
+}
+
+    /* Search & Sort Bar */
     .search-sort-bar {
       max-width: 900px;
       margin: 0 auto 1.5rem auto;
@@ -272,6 +333,7 @@
     .btn-buy:hover {
       background: #00b89e;
     }
+    /* Suggestion Box */
     .suggestion-container {
       background: #161b22;
       padding: 2rem;
@@ -315,6 +377,7 @@
     button#submitSuggestion:hover {
       background: #00b89e;
     }
+    /* Thank you message */
     #thankYouMessage {
       display: none;
       color: #00e3ca;
@@ -324,6 +387,7 @@
       font-size: 1.2rem;
       text-shadow: 0 0 6px #00e3ca;
     }
+    /* Notification Toast */
     #notification {
       display: none;
       position: fixed;
@@ -338,6 +402,7 @@
       z-index: 9999;
       font-size: 1.08rem;
     }
+    /* Footer */
     footer {
       width: 100%;
       max-width: 900px;
@@ -363,6 +428,7 @@
       font-size: 1.1rem;
       margin: 0 5px;
     }
+    /* Modal styles */
     #projectModal {
       display: none;
       position: fixed;
@@ -426,6 +492,82 @@
     #modalShare a:focus {
       outline: 2px solid #00ffe7;
     }
+    /* LIGHT MODE IMPROVEMENTS */
+    body.light-mode {
+      background: #f7fafb;
+      color: #1a1a1a;
+    }
+    body.light-mode .header-bar {
+      background: none;
+    }
+    body.light-mode .header-left .tagline {
+      color: #00796b;
+    }
+    body.light-mode .header-left h1,
+    body.light-mode h2 {
+      color: #00796b;
+      text-shadow: none;
+    }
+    body.light-mode .smart-description {
+      color: #00796b;
+    }
+    body.light-mode .search-sort-bar input,
+    body.light-mode .search-sort-bar select {
+      background: #fff;
+      color: #111;
+      border: 2px solid #00796b;
+    }
+    body.light-mode .search-sort-bar input:focus,
+    body.light-mode .search-sort-bar select:focus {
+      border-color: #26c6da;
+    }
+    body.light-mode .project-card,
+    body.light-mode .suggestion-container {
+      background: #ffffff;
+      box-shadow: 0 2px 16px rgba(0, 121, 107, 0.10);
+      border: 1.5px solid #e0e0e0;
+    }
+    body.light-mode .project-title,
+    body.light-mode .project-price {
+      color: #00796b;
+      text-shadow: none;
+    }
+    body.light-mode .project-desc {
+      color: #222;
+    }
+    body.light-mode .btn-buy,
+    body.light-mode button#submitSuggestion {
+      background: #009688;
+      color: #fff;
+      box-shadow: 0 0 8px #009688;
+    }
+    body.light-mode .btn-buy:hover,
+    body.light-mode button#submitSuggestion:hover {
+      background: #00796b;
+    }
+    body.light-mode input,
+    body.light-mode textarea {
+      background-color: #fff;
+      color: #111;
+      border: 2px solid #00796b;
+    }
+    body.light-mode input:focus,
+    body.light-mode textarea:focus {
+      border-color: #26c6da;
+      box-shadow: 0 0 6px #26c6da;
+    }
+    body.light-mode footer {
+      border-top: 1px solid #ccc;
+      color: #555;
+    }
+    body.light-mode footer img.logo {
+      filter: none;
+    }
+    body.light-mode #thankYouMessage {
+      color: #00796b;
+      text-shadow: none;
+    }
+    /* Modal light mode */
     body.light-mode #projectModal {
       background: rgba(240, 249, 245, 0.98);
     }
@@ -451,109 +593,110 @@
       outline: 2px solid #009688;
     }
     @media (max-width: 600px) {
-      body {
-        padding: 0.5rem;
-      }
-      .header-bar {
-        flex-direction: column;
-        align-items: stretch;
-        padding: 0.4rem 0.2rem;
-        gap: 0.7rem;
-      }
-      .header-left {
-        flex-direction: row;
-        align-items: center;
-        gap: 0.5rem;
-        text-align: center;
-        margin-left: 0;
-      }
-      .header-left .logo {
-        height: 40px;
-        margin-left: 0;
-      }
-      .header-left .tagline {
-        font-size: 0.95rem;
-        margin-left: 0;
-        text-align: center;
-      }
-      .header-center {
-        font-size: 1.1rem;
-        margin: 0.4rem 0;
-        text-align: center;
-        position: static;
-        transform: none;
-        white-space: normal;
-        pointer-events: auto;
-      }
-      .header-right {
-        gap: 0.7rem;
-        width: 100%;
-        justify-content: flex-start;
-      }
-      .dashboard-link {
-        font-size: 1rem;
-        padding: 0.5rem 1rem;
-        margin-right: 0;
-      }
-      .switch {
-        width: 40px;
-        height: 22px;
-      }
-      .slider:before {
-        height: 16px;
-        width: 16px;
-        left: 3px;
-        bottom: 3px;
-      }
-      .smart-description {
-        font-size: 1.02rem;
-        padding: 0 0.2rem;
-      }
-      .search-sort-bar {
-        flex-direction: column;
-        gap: 0.5rem;
-        padding: 0 0.2rem;
-      }
-      .projects-container {
-        grid-template-columns: 1fr;
-        gap: 1rem;
-        padding: 0 0.2rem;
-      }
-      .project-card {
-        padding: 1rem 0.5rem;
-        font-size: 0.97rem;
-      }
-      .project-img {
-        height: 110px;
-        border-radius: 10px;
-      }
-      .suggestion-container {
-        padding: 1rem 0.5rem;
-        border-radius: 12px;
-        font-size: 0.98rem;
-        width: 98vw;
-        max-width: 99vw;
-      }
-      form#suggestionForm {
-        gap: 0.6rem;
-      }
-      footer {
-        font-size: 0.85rem;
-        padding: 0.6rem 0.2rem;
-        flex-direction: column;
-        gap: 0.4rem;
-      }
-      footer img.logo {
-        height: 22px;
-      }
-      #modalContent {
-        padding: 0.7rem 0.2rem;
-        max-width: 96vw;
-      }
-      #modalImg {
-        max-width: 120px;
-      }
-    }
+  body {
+    padding: 0.5rem;
+  }
+  .header-bar {
+    flex-direction: column;
+    align-items: stretch;
+    padding: 0.4rem 0.2rem;
+    gap: 0.7rem;
+  }
+  .header-left {
+    flex-direction: row;
+    align-items: center;
+    gap: 0.5rem;
+    text-align: center;
+    margin-left: 0;
+  }
+  .header-left .logo {
+    height: 40px;
+    margin-left: 0;
+  }
+  .header-left .tagline {
+    font-size: 0.95rem;
+    margin-left: 0;
+    text-align: center;
+  }
+  .header-center {
+    font-size: 1.1rem;
+    margin: 0.4rem 0;
+    text-align: center;
+    position: static;
+    transform: none;
+    white-space: normal;
+    pointer-events: auto;
+  }
+  .header-right {
+    gap: 0.7rem;
+    width: 100%;
+    justify-content: flex-start;
+  }
+  .dashboard-link {
+    font-size: 1rem;
+    padding: 0.5rem 1rem;
+    margin-right: 0;
+  }
+  .switch {
+    width: 40px;
+    height: 22px;
+  }
+  .slider:before {
+    height: 16px;
+    width: 16px;
+    left: 3px;
+    bottom: 3px;
+  }
+  .smart-description {
+    font-size: 1.02rem;
+    padding: 0 0.2rem;
+  }
+  .search-sort-bar {
+    flex-direction: column;
+    gap: 0.5rem;
+    padding: 0 0.2rem;
+  }
+  .projects-container {
+    grid-template-columns: 1fr;
+    gap: 1rem;
+    padding: 0 0.2rem;
+  }
+  .project-card {
+    padding: 1rem 0.5rem;
+    font-size: 0.97rem;
+  }
+  .project-img {
+    height: 110px;
+    border-radius: 10px;
+  }
+  .suggestion-container {
+    padding: 1rem 0.5rem;
+    border-radius: 12px;
+    font-size: 0.98rem;
+    width: 98vw;
+    max-width: 99vw;
+  }
+  form#suggestionForm {
+    gap: 0.6rem;
+  }
+  footer {
+    font-size: 0.85rem;
+    padding: 0.6rem 0.2rem;
+    flex-direction: column;
+    gap: 0.4rem;
+  }
+  footer img.logo {
+    height: 22px;
+  }
+  #modalContent {
+    padding: 0.7rem 0.2rem;
+    max-width: 96vw;
+  }
+  #modalImg {
+    max-width: 120px;
+  }
+}
+
   </style>
 </head>
 <body>
@@ -603,26 +746,41 @@
     <!-- Cards rendered by JS -->
   </section>
 
-  <section class="suggestion-container">
-    <h2 style="color:#00ffe7; margin-top:0; margin-bottom:0.3rem; text-align:center;">💡 Component Suggestion</h2>
+  <section class="suggestion-container" style="max-width: 500px; margin: auto; padding: 1.5rem; border: 1px solid #00ffe7; border-radius: 12px; background: #0d1117;">
+    <h2 style="color:#00ffe7; margin-top:0; margin-bottom:0.8rem; text-align:center;">💡 Component Suggestion</h2>
     <p style="color:#9bbabb; text-align:center; font-size:1.05rem; margin-bottom:1.4rem;">
-      Can't find a component? Suggest it below and our team will try to add it soon!
+        Can't find a component? Suggest it below and our team will try to add it soon!
     </p>
     <form id="suggestionForm">
-      <input type="text" id="suggestionName" name="suggestionName" placeholder="Your Name" required />
-      <input type="email" id="suggestionEmail" name="suggestionEmail" placeholder="Your Email (optional)" />
-      <input type="text" id="suggestionComponent" name="suggestionComponent" placeholder="Component Name" required />
-      <textarea id="suggestionDescription" name="suggestionDescription" rows="4" placeholder="Component Details / Why needed" required></textarea>
-      <button type="submit" id="submitSuggestion">Suggest Component</button>
+        <input type="text" id="suggestionName" name="suggestionName" placeholder="Your Name" required
+            style="width: 100%; margin-bottom: 1rem; padding: 0.7rem; border-radius: 8px; border: 1px solid #555;" />
+        
+        <input type="tel" id="suggestionPhone" name="suggestionPhone" placeholder="Your Phone Number" required
+            pattern="[0-9]{10}" 
+            style="width: 100%; margin-bottom: 1rem; padding: 0.7rem; border-radius: 8px; border: 1px solid #555;" />
+        
+        <input type="text" id="suggestionComponent" name="suggestionComponent" placeholder="Component Name" required
+            style="width: 100%; margin-bottom: 1rem; padding: 0.7rem; border-radius: 8px; border: 1px solid #555;" />
+        
+        <textarea id="suggestionDescription" name="suggestionDescription" rows="4" placeholder="Component Details / Why needed" required
+            style="width: 100%; margin-bottom: 1rem; padding: 0.7rem; border-radius: 8px; border: 1px solid #555;"></textarea>
+        
+        <button type="submit" id="submitSuggestion"
+            style="width: 100%; padding: 0.8rem; border-radius: 8px; border:none; background:#00e3ca; color:#0d1117; cursor:pointer; font-weight:600; font-size: 1.05rem; transition: background 0.3s;">
+            Suggest Component
+        </button>
     </form>
-    <div id="thankYouMessage" style="display:none;">
-      ✅ Thank you for your suggestion! We appreciate your feedback.
-      <br />
-      <button id="suggestAnother" style="margin-top: 1rem; padding: 0.5rem 1rem; border-radius: 8px; border:none; background:#00e3ca; color:#0d1117; cursor:pointer; font-weight:600; box-shadow: 0 0 8px #00e3ca;">
-        Suggest another component!
-      </button>
+
+    <div id="thankYouMessage" style="display:none; text-align:center; color:#00e3ca; margin-top: 1.5rem;">
+        ✅ Thank you for your suggestion! We appreciate your feedback.
+        <br />
+        <button id="suggestAnother" 
+            style="margin-top: 1rem; padding: 0.5rem 1rem; border-radius: 8px; border:none; background:#00e3ca; color:#0d1117; cursor:pointer; font-weight:600; box-shadow: 0 0 8px #00e3ca;">
+            Suggest another component!
+        </button>
     </div>
-  </section>
+</section>
+
 
   <footer>
     <img src="images/logo.jpg" alt="Yantrakart Logo" class="logo" />
@@ -1016,7 +1174,7 @@
     title: "SG90 Micro Servo Motor",
     description: "A lightweight, affordable servo for robotics, automation, and RC projects. 180° rotation, easy PWM control.",
     price: 120,
-    img: "component13.jpg",
+    img: "component21.webp",
     specs: [
       "Operating Voltage: +5V",
       "Stall Torque: 1.8kg/cm (4.8V)",
@@ -1037,8 +1195,8 @@
   {
     title: "PIR Motion Sensor Module",
     description: "Detects human motion for security, automation, and smart lighting. Adjustable delay, digital output.",
-    price: 90,
-    img: "component14.jpg",
+    price: 100,
+    img: "component22.webp",
     specs: [
       "Supply Voltage: 5-20V DC",
       "Output: Standard TTL (digital)",
@@ -1057,8 +1215,8 @@
   {
     title: "HC-05 Bluetooth Module",
     description: "Classic Bluetooth SPP module for wireless serial communication. Ideal for Arduino, ESP32, and robotics projects.",
-    price: 180,
-    img: "component15.jpg",
+    price: 320,
+    img: "component23.webp",
     specs: [
       "Bluetooth V2.0+EDR (3Mbps)",
       "Voltage: 3.1V~4.2V (typically 3.3V)",
@@ -1078,7 +1236,7 @@
     title: "USB 2.0 Type A to Type B Cable",
     description: "Connect your Arduino UNO/MEGA or printer to your PC. High-quality, shielded cable for fast, reliable data transfer.",
     price: 60,
-    img: "component16.jpg",
+    img: "component24.webp",
     specs: [
       "USB-A (male) to USB-B (male)",
       "Length: 1 meter (typical)",
@@ -1223,25 +1381,37 @@
       e.preventDefault();
 
       const name = document.getElementById("suggestionName").value.trim();
-      const email = document.getElementById("suggestionEmail").value.trim();
-      const component = document.getElementById("suggestionComponent").value.trim();
+      const phone = document.getElementById("suggestionPhone").value.trim();
+      const projectName = document.getElementById("suggestionProjectName").value.trim();
       const description = document.getElementById("suggestionDescription").value.trim();
 
-      if (!name || !component || !description) {
-        alert("Please fill out all required fields.");
+      if (!name || !phone || !projectName || !description) {
+        alert("Please fill out all fields.");
         return;
       }
 
-      // You can connect this to Firestore if you want, for now just show thank you
-      document.getElementById("suggestAnother").addEventListener("click", () => {
-        suggestionForm.reset();
-        thankYouMessage.style.display = "none";
-        suggestionForm.style.display = "flex";
-      });
+      try {
+        await addDoc(collection(db, "iotProjectSuggestions"), {
+          name,
+          phone,
+          projectName,
+          description,
+          createdAt: serverTimestamp()
+        });
+        document.getElementById("suggestAnother").addEventListener("click", () => {
+          suggestionForm.reset();
+          thankYouMessage.style.display = "none";
+          suggestionForm.style.display = "flex";
+        });
 
-      suggestionForm.style.display = "none";
-      thankYouMessage.style.display = "block";
-      showNotification("✅ Suggestion submitted successfully!");
+        suggestionForm.style.display = "none";
+        thankYouMessage.style.display = "block";
+        showNotification("✅ Suggestion submitted successfully!");
+
+      } catch (error) {
+        console.error("Error submitting suggestion: ", error);
+        alert("❌ Something went wrong. Please try again.");
+      }
     });
   </script>
 </body>
