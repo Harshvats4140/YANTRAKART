@@ -1,5 +1,8 @@
 {
   "projects": {
-    "default": "cucontentprojectstore"
-  }
+    "default": "yantrakart",
+    "yantrakart": "yantrakartira"
+  },
+  "targets": {},
+  "etags": {}
 }

@@ -613,6 +613,11 @@ html[data-theme='light'] .tagline {
         <h3>IoT Projects</h3>
         <p>🌐🤖 Explore a wide range of innovative IoT projects to enhance your learning and practical skills. From smart home automation to health monitoring and smart agriculture, get hands-on experience with real-world technology! 🚀🔌.</p>
       </a>
+      <a href="components.html" class="info-card" id="componentsCard" data-requires-auth="true" role="button" tabindex="0" aria-label="Explore Components">
+  <h3>Components</h3>
+  <p>🔩🧰 Browse a curated selection of electronic and mechanical components essential for building your IoT and engineering projects. Sourced for students, priced for accessibility!</p>
+</a>
+
       <a href="software.html" class="info-card" id="cadCard" data-requires-auth="true" role="button" tabindex="0" aria-label="Explore CAD and Software Projects">
         <h3>CAD &amp; Software Projects</h3>
         <p>💻🛠️📐 Explore ready-to-use software tools and professional CAD models designed for engineering students. Boost your learning with easy-to-understand projects, customizable solutions, and expert support. Perfect for assignments and presentations! 🚀✨.</p>
@@ -699,13 +704,15 @@ html[data-theme='light'] .tagline {
       sessionStorage.setItem('yantrakart_welcome_shown', 'yes');
     }
     const firebaseConfig = {
-      apiKey: "AIzaSyAeiX6atXEITq6Jfptsc9a3Pib6swSWGZM",
-      authDomain: "cucontentprojectstore.firebaseapp.com",
-      projectId: "cucontentprojectstore",
-      storageBucket: "cucontentprojectstore.appspot.com",
-      messagingSenderId: "507592669118",
-      appId: "1:507592669118:web:07d5d1c70872b7964febef",
-    };
+  apiKey: "AIzaSyBjvQnkPGMPToU0tV3pNQ1ASLzkbW8DFYk",
+  authDomain: "yantrakartira.firebaseapp.com",
+  projectId: "yantrakartira",
+  storageBucket: "yantrakartira.firebasestorage.app",
+  messagingSenderId: "292792177748",
+  appId: "1:292792177748:web:73890624ce1c29da7a49c1",
+  measurementId: "G-MVNGVNSMX1"
+};
+   
     const app = initializeApp(firebaseConfig);
     const db = getFirestore(app);
     const storage = getStorage(app);
@@ -859,12 +866,14 @@ html[data-theme='light'] .tagline {
     const iotCard = document.getElementById("iotCard");
     const cadCard = document.getElementById("cadCard");
     const authMessage = document.getElementById("authMessage");
+const componentsCard = document.getElementById("componentsCard");
+componentsCard.addEventListener("click", cardClickHandler);
 
     let isUserLoggedIn = false;
 
     function showAuthMessage() {
       authMessage.innerHTML = `
-        🔒 Please log in to access IoT or CAD & Software Projects.
+        🔒 Please log in to access IoT or CAD & Software Projects or buy any Component.
         <br>
         <button id="authLoginBtn" style="margin-top:10px; background:var(--button-bg); color:#fff; border:none; border-radius:20px; padding:0.5em 1.5em; font-weight:600; cursor:pointer;">Login</button>
       `;
