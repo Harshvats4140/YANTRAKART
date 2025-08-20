@@ -392,7 +392,15 @@
     function updateFinalPayment() {
       const finalAmount = Math.max(0, projectPrice - couponDiscount);
       finalPaymentEl.innerHTML = `💸 Final Payment after discount: <span style="color:#43e97b;">₹${finalAmount.toLocaleString('en-IN')}</span>`;
-    }
+    if (projectPrice < 299) {
+    couponCodeInput.disabled = true;
+    couponCodeInput.value = '';
+    couponMessageEl.textContent = '⚠️ Coupons can only be applied for orders of ₹299 or more.';
+  } else {
+    couponCodeInput.disabled = false;
+    couponMessageEl.textContent = '';
+  }
+ }
 
     // Validate referral code and show referrer username
     referralCodeInput.addEventListener('input', async () => {
@@ -430,6 +438,15 @@
         updateFinalPayment();
         return;
       }
+     // Minimum order check for coupon
+   if (projectPrice < 299) {
+    couponMessageEl.textContent = '';
+     errorMsg.textContent = '❌ Minimum order amount for coupon is ₹299.';
+    couponDiscount = 0;
+    couponDocId = null;
+    updateFinalPayment();
+    return;
+   }
 
       try {
         const q = query(collection(db, "coupons"), where("code", "==", code), where("used", "==", false));

@@ -11,6 +11,8 @@
   <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
   <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore-compat.js"></script>
   <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-auth-compat.js"></script>
+  <script src="https://checkout.razorpay.com/v1/checkout.js"></script>
+
 
   <style>
     body { background: #0d1117; color: #c9d1d9; font-family: 'Poppins', sans-serif; margin: 0; }
@@ -231,28 +233,55 @@ const customerPhone = user && user.phoneNumber ? user.phoneNumber : "";
       }
 
       // Store for payment button
-      upiBtn.onclick = function() {
-        if (amountDue > 0) {
-          window.location.href = getUpiLink(amountDue.toFixed(2));
-          // Simulate payment for demo (replace with backend confirmation in production)
-          setTimeout(() => {
-            if (order.status === "approved") {
-              paymentState = "advancePaid";
-              localStorage.setItem("paymentState", paymentState);
-              alert("Advance payment marked as done (for demo).");
-              location.reload();
-            } else if (order.status === "delivered") {
-              paymentState = "fullPaid";
-              localStorage.setItem("paymentState", paymentState);
-              alert("Final payment marked as done (for demo).");
-              downloadInvoice.style.display = "block";
-              paidMsg.style.display = "block";
-            }
-          }, 2000);
-        } else {
-          alert("Payment not available yet.");
+   upiBtn.onclick = function() {
+  if (amountDue > 0) {
+    const options = {
+      key: "YOUR_RAZORPAY_KEY_ID", // Replace with your Razorpay key
+      amount: Math.round(amountDue * 100), // Amount in paise
+      currency: "INR",
+      name: "Yantrakart",
+      description: "Order Payment",
+      image: "images/logo.jpg", // Optional: your logo
+      order_id: undefined, // Optional: If you want to use Razorpay Orders API
+      handler: async function (response) {
+        // Payment successful!
+        // Optionally, verify payment on server here
+        // Update Firestore for payment state
+        if (order.status === "approved") {
+          paymentState = "advancePaid";
+          localStorage.setItem("paymentState", paymentState);
+          alert("Advance payment successful! Payment ID: " + response.razorpay_payment_id);
+          // Optionally update Firestore here
+          await db.collection("orders").doc(order.orderId).update({ paymentState: "advancePaid" });
+          location.reload();
+        } else if (order.status === "delivered") {
+          paymentState = "fullPaid";
+          localStorage.setItem("paymentState", paymentState);
+          alert("Final payment successful! Payment ID: " + response.razorpay_payment_id);
+          await db.collection("orders").doc(order.orderId).update({ paymentState: "fullPaid" });
+          downloadInvoice.style.display = "block";
+          paidMsg.style.display = "block";
         }
-      };
+      },
+      prefill: {
+        name: order.customerName || "",
+        email: order.email || "",
+        contact: order.phone || ""
+      },
+      notes: {
+        order_id: order.orderId
+      },
+      theme: {
+        color: "#00ffe7"
+      }
+    };
+    const rzp = new Razorpay(options);
+    rzp.open();
+  } else {
+    alert("Payment not available yet.");
+  }
+};
+
 
       // Invoice Download (PDF)
       downloadInvoice.onclick = function() {

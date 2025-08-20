@@ -1,3 +1,8 @@
+// index.js (Node backend)
+require('dotenv').config();
+
+const GOOGLE_API_KEY = process.env.GOOGLE_API_KEY;
+console.log('Using API Key:', GOOGLE_API_KEY);
 import express from 'express';
 import cors from 'cors';
 import { initializeApp } from 'firebase/app';
@@ -50,7 +55,7 @@ app.post('/submit-feedback', async (req, res) => {
 
     // 2. Add notification for admin to 'notifications' collection
     await addDoc(collection(db, 'notifications'), {
-      userEmail: 'harshvats4140@gmail.com', // Use your admin identifier or email here
+      userEmail: 'harshvats4140@gmail.com||sreekeshd7@gmail.com', // Use your admin identifier or email here
       type: 'feedback',
       message: `📝 New feedback submitted by <b>${name}</b> (${phone}):<br>${feedback}`,
       feedbackId: feedbackRef.id,

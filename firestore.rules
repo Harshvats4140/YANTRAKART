@@ -1,0 +1,26 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+
+    // Allow users to read/write only their own data
+    match /users/{userId} {
+      allow read, write: if request.auth != null && request.auth.uid == userId;
+    }
+
+    // Example: Read-only public data
+    match /products/{productId} {
+      allow read: if true;  // Anyone can read
+      allow write: if request.auth != null && request.auth.token.admin == true;
+    }
+
+    // Optional: Admin-only access to a collection
+    match /admin_data/{docId} {
+      allow read, write: if request.auth != null && request.auth.token.admin == true;
+    }
+
+    // Catch-all deny rule
+    match /{document=**} {
+      allow read, write: if false;
+    }
+  }
+}

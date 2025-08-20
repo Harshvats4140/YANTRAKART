@@ -814,6 +814,10 @@ body.light-mode .tagline {
       <a href="#" id="nav-orders" onclick="showOrders();setActive(this)">📝 My Orders</a>
       <a href="#" id="nav-trackorder" onclick="showTrackOrder();setActive(this)">📦 Track Order</a>
       <a href="#" id="nav-coupons" onclick="showCoupons();setActive(this)">🏷️ My Coupons</a>
+     <a href="admin.html" id="nav-admin" style="display: none; color: #00ffe7;">
+  🛡️ Admin Login
+</a>
+
       <a href="#" id="nav-notifications" onclick="showNotifications();setActive(this)">
         🔔 Notifications <span class="badge" id="notif-badge" style="display:none;">0</span>
       </a>
@@ -860,29 +864,49 @@ const firebaseConfig = {
   appId: "1:292792177748:web:73890624ce1c29da7a49c1",
   measurementId: "G-MVNGVNSMX1"
 };
+// Initialize Firebase
 firebase.initializeApp(firebaseConfig);
 const auth = firebase.auth();
 const db = firebase.firestore();
 
+// Highlight active sidebar link
 function setActive(link) {
-  document.querySelectorAll('.sidebar a').forEach(a => a.classList.remove('active'));
-  if (link) link.classList.add('active');
+  document.querySelectorAll('.sidebar a').forEach(a => a.classList.remove('active'));
+  if (link) link.classList.add('active');
 }
+
+// Theme toggle and store preference
 function toggleTheme() {
-  document.body.classList.toggle('light-mode');
-  localStorage.setItem('theme', document.body.classList.contains('light-mode') ? 'light' : 'dark');
+  document.body.classList.toggle('light-mode');
+  localStorage.setItem('theme', document.body.classList.contains('light-mode') ? 'light' : 'dark');
 }
+
+// Get current authenticated user (async)
 function getCurrentUser() {
-  return new Promise(resolve => {
-    const unsub = auth.onAuthStateChanged(user => { unsub(); resolve(user); });
-  });
+  return new Promise(resolve => {
+    const unsub = auth.onAuthStateChanged(user => {
+      unsub(); resolve(user);
+    });
+  });
 }
-// Sidebar username
+
+// Display user's name in sidebar
 auth.onAuthStateChanged(user => {
-  if (user) document.getElementById('sidebar-username').textContent = user.displayName || "User";
+  if (user) {
+    document.getElementById('sidebar-username').textContent = user.displayName || "User";
+  }
 });
 
-// Profile (view only)
+// Conditionally show Admin Login nav link only for specific user (admin)
+auth.onAuthStateChanged(user => {
+  if (user && user.email === "harshvats4140@gmail.com||sreekeshd7@gmail.com") {
+    document.getElementById("nav-admin").style.display = "inline-block";
+  }
+});
+
+// TODO: Profile View Functionality (Read-Only)
+// Add function to display user's email/photo/UID etc., if needed
+
 async function showProfile() {
   setActive(document.getElementById('nav-profile'));
   document.getElementById('main-content').innerHTML = `<div class="loading">Loading profile...</div>`;
