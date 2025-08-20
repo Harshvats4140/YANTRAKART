@@ -4,3 +4,5 @@ admin.html
 echo serviceAccountKey.json >> .gitignore
 git rm --cached serviceAccountKey.json
 git commit -m "Removed serviceAccountKey.json from repo"
+serviceAccountKey.json
+*.env
